@@ -86,7 +86,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     
     def ButtonMinSlot(self):
         self.showMinimized()
-    
+    ###
     @Slot(str)
     def display(self, text):
         self.console.appendHtml(text)
@@ -95,7 +95,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.worker = Util()
         self.worker.signal.connect(self.display)
         self.worker.start()
-    
+
+
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     w = MainWindow()
