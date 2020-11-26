@@ -1,51 +1,32 @@
 import sys
 
 from PyQt5.QtCore import *
-from PyQt5.QtCore import pyqtSlot as Slot
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
 from qss import style
 from ui import *
-from util import Util
 
 BACKGROUND_COLOR = "#ffffff"
-
-TITLE_COLOR = '#ffffff'
-
 # 按钮高度
 BUTTON_HEIGHT = 25
 # 按钮宽度
 BUTTON_WIDTH = 20
+TITLE_COLOR = "#ffffff"  # 头部颜色
+
+from handle import Handle
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
+    
     def __init__(self):
+        self.handler = Handle(self)
+        self.m_flag = None
+        self.m_Position = None
         super(MainWindow, self).__init__()
         self.setupUi(self)
-        self.pushButton.clicked.connect(self.close)
-        self.pushButton_2.clicked.connect(self.ButtonMinSlot)
-        self.worker = None
-        
-        self.setWindowFlag(QtCore.Qt.FramelessWindowHint)  # 去边框
-        self.setAttribute(QtCore.Qt.WA_TranslucentBackground)  # 设置窗口背景透明
-        self.centralwidget.setAttribute(QtCore.Qt.WA_TranslucentBackground)  # 设置pyqt自动生成的centralwidget背景透明
-        self.centralwidget.setAutoFillBackground(True)
-        self.pushButton.setFixedSize(QSize(BUTTON_WIDTH, BUTTON_HEIGHT))  # 设置按钮大小
-        self.pushButton_2.setFixedSize(QSize(BUTTON_WIDTH, BUTTON_HEIGHT))  # 设置按钮大小
-        
-        Qss = 'QWidget#widget_2{background-color: %s;}' % BACKGROUND_COLOR
-        Qss += 'QWidget#widget{background-color: %s;border-top-right-radius:5 ;border-top-left-radius:5 ;}' % TITLE_COLOR
-        Qss += 'QWidget#widget_3{background-color: %s;}' % TITLE_COLOR
-        Qss += 'QPushButton#pushButton{margin-top:6;background-color: %s;border-image:url(./img/btn_close_normal.png);border-top-right-radius:5 ;}' % TITLE_COLOR
-        Qss += 'QPushButton#pushButton:hover{border-image:url(./img/btn_close_down2.png); border-top-right-radius:5 ;}'
-        Qss += 'QPushButton#pushButton:pressed{border-image:url(./img/btn_close_down.png);border-top-right-radius:5 ;}'
-        Qss += 'QPushButton#pushButton_2{margin-top:8;background-color: %s;border-image:url(./img/btn_min_normal.png);}' % TITLE_COLOR
-        Qss += 'QPushButton#pushButton_2:hover{background-color: %s;border-image:url(./img/btn_min_normal.png);}' % BACKGROUND_COLOR
-        Qss += 'QPushButton#pushButton_2:pressed{background-color: %s;border-top-left-radius:5 ;}' % BACKGROUND_COLOR
-        Qss += 'QPushButton#pushButton_3{background-color: %s;border-top-left-radius:5 ;border:0;}' % TITLE_COLOR
-        Qss += '#label{background-color:rbga(0,0,0,0);color:#111111;}'
-        self.setStyleSheet(Qss)  # 边框部分qss重载
+        self.init_ui()
+        self.click_handler()
         
         self.shadow = QGraphicsDropShadowEffect()
         self.shadow.setBlurRadius(15)
@@ -63,9 +44,41 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.widget_2.setGraphicsEffect(self.shadow)
         self.widget.setGraphicsEffect(self.shadow1)  # 加阴影，更立体
     
-    def __del__(self):
-        if hasattr(self, 'worker'):
-            self.worker.stop()
+    def init_ui(self):
+        self.setWindowFlag(QtCore.Qt.FramelessWindowHint)  # 去边框
+        self.setAttribute(QtCore.Qt.WA_TranslucentBackground)  # 设置窗口背景透明
+        self.centralwidget.setAttribute(QtCore.Qt.WA_TranslucentBackground)  # 设置pyqt自动生成的centralwidget背景透明
+        self.centralwidget.setAutoFillBackground(True)
+        self.pushButton.setFixedSize(QSize(BUTTON_WIDTH, BUTTON_HEIGHT))  # 设置按钮大小
+        self.pushButton_2.setFixedSize(QSize(BUTTON_WIDTH, BUTTON_HEIGHT))  # 设置按钮大小
+        Qss = 'QWidget#widget_2{background-color: %s;}' % BACKGROUND_COLOR
+        Qss += 'QWidget#widget{background-color: %s;border-top-right-radius:5 ;border-top-left-radius:5 ;}' % TITLE_COLOR
+        Qss += 'QWidget#widget_3{background-color: %s;}' % TITLE_COLOR
+        Qss += 'QPushButton#pushButton{margin-top:6;background-color: %s;border-image:url(./img/btn_close_normal.png);border-top-right-radius:5 ;}' % TITLE_COLOR
+        Qss += 'QPushButton#pushButton:hover{border-image:url(./img/btn_close_down2.png); border-top-right-radius:5 ;}'
+        Qss += 'QPushButton#pushButton:pressed{border-image:url(./img/btn_close_down.png);border-top-right-radius:5 ;}'
+        Qss += 'QPushButton#pushButton_2{margin-top:8;background-color: %s;border-image:url(./img/btn_min_normal.png);}' % TITLE_COLOR
+        Qss += 'QPushButton#pushButton_2:hover{background-color: %s;border-image:url(./img/btn_min_normal.png);}' % BACKGROUND_COLOR
+        Qss += 'QPushButton#pushButton_2:pressed{background-color: %s;border-top-left-radius:5 ;}' % BACKGROUND_COLOR
+        Qss += 'QPushButton#pushButton_3{background-color: %s;border-top-left-radius:5 ;border:0;}' % TITLE_COLOR
+        Qss += '#label{background-color:rbga(0,0,0,0);color:#111111;}'
+        self.setStyleSheet(Qss)  # 边框部分qss重载
+    
+    def click_handler(self):
+        """
+        按钮点击事件
+        :return:
+        """
+        self.pushButton.clicked.connect(self.close)  # 关闭
+        self.pushButton_2.clicked.connect(self.ButtonMinSlot)  # 最小化
+        self.login.clicked.connect(self.handler.login)
+    
+    def login_to_server(self):
+        """
+        登陆到服务器
+        :return:
+        """
+        self.handler.login()
     
     def mousePressEvent(self, event):
         if event.button() == QtCore.Qt.LeftButton:
@@ -80,21 +93,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.setCursor(QCursor(QtCore.Qt.ArrowCursor))
     
     def mouseMoveEvent(self, event):
+        """
+        拖动事件
+        :param event:
+        :return:
+        """
         if QtCore.Qt.LeftButton and self.m_flag:
             self.move(event.globalPos() - self.m_Position)  # 更改窗口位置
             event.accept()
     
     def ButtonMinSlot(self):
         self.showMinimized()
-    ###
-    @Slot(str)
-    def display(self, text):
-        self.console.appendHtml(text)
-    
-    def start(self):
-        self.worker = Util()
-        self.worker.signal.connect(self.display)
-        self.worker.start()
 
 
 if __name__ == '__main__':

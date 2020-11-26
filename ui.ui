@@ -122,7 +122,7 @@
       <height>531</height>
      </rect>
     </property>
-    <widget class="QPushButton" name="pushButton_4">
+    <widget class="QPushButton" name="login">
      <property name="geometry">
       <rect>
        <x>282</x>
@@ -135,7 +135,7 @@
       <string>连接服务器</string>
      </property>
     </widget>
-    <widget class="QLineEdit" name="lineEdit">
+    <widget class="QLineEdit" name="device_id">
      <property name="geometry">
       <rect>
        <x>22</x>
@@ -199,7 +199,7 @@
       </attribute>
      </widget>
     </widget>
-    <widget class="QLineEdit" name="lineEdit_2">
+    <widget class="QLineEdit" name="safe_code">
      <property name="geometry">
       <rect>
        <x>22</x>
@@ -210,6 +210,9 @@
      </property>
      <property name="statusTip">
       <string>设备安全码在后台可获得</string>
+     </property>
+     <property name="echoMode">
+      <enum>QLineEdit::Password</enum>
      </property>
      <property name="placeholderText">
       <string>你的设备安全码</string>
