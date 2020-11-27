@@ -126,7 +126,7 @@
      <property name="geometry">
       <rect>
        <x>282</x>
-       <y>183</y>
+       <y>132</y>
        <width>141</width>
        <height>71</height>
       </rect>
@@ -139,7 +139,7 @@
      <property name="geometry">
       <rect>
        <x>22</x>
-       <y>183</y>
+       <y>132</y>
        <width>231</width>
        <height>31</height>
       </rect>
@@ -151,7 +151,7 @@
       <string/>
      </property>
      <property name="maxLength">
-      <number>30</number>
+      <number>32</number>
      </property>
      <property name="placeholderText">
       <string>你的设备ID</string>
@@ -160,10 +160,10 @@
     <widget class="QTabWidget" name="tabWidget">
      <property name="geometry">
       <rect>
-       <x>22</x>
-       <y>273</y>
+       <x>20</x>
+       <y>220</y>
        <width>401</width>
-       <height>231</height>
+       <height>291</height>
       </rect>
      </property>
      <property name="toolTipDuration">
@@ -197,13 +197,29 @@
       <attribute name="title">
        <string>运行日志</string>
       </attribute>
+      <widget class="QTextBrowser" name="textBrowser">
+       <property name="geometry">
+        <rect>
+         <x>6</x>
+         <y>8</y>
+         <width>381</width>
+         <height>251</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QTextBrowser{border-width:0;border-style:outset;font-size:12}</string>
+       </property>
+       <property name="lineWrapColumnOrWidth">
+        <number>0</number>
+       </property>
+      </widget>
      </widget>
     </widget>
     <widget class="QLineEdit" name="safe_code">
      <property name="geometry">
       <rect>
        <x>22</x>
-       <y>223</y>
+       <y>172</y>
        <width>231</width>
        <height>31</height>
       </rect>
@@ -221,20 +237,7 @@
     <widget class="QLabel" name="ad1">
      <property name="geometry">
       <rect>
-       <x>20</x>
-       <y>20</y>
-       <width>191</width>
-       <height>71</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>TextLabel</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="ad2">
-     <property name="geometry">
-      <rect>
-       <x>230</x>
+       <x>110</x>
        <y>20</y>
        <width>191</width>
        <height>71</height>

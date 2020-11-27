@@ -1,4 +1,6 @@
+import _thread
 import sys
+from time import sleep
 
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
@@ -72,13 +74,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.pushButton.clicked.connect(self.close)  # 关闭
         self.pushButton_2.clicked.connect(self.ButtonMinSlot)  # 最小化
         self.login.clicked.connect(self.handler.login)
-    
-    def login_to_server(self):
-        """
-        登陆到服务器
-        :return:
-        """
-        self.handler.login()
+        _thread.start_new_thread(self.info_window_scroll, ())
     
     def mousePressEvent(self, event):
         if event.button() == QtCore.Qt.LeftButton:
@@ -104,6 +100,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     
     def ButtonMinSlot(self):
         self.showMinimized()
+    
+    def info_window_scroll(self):
+        while True:
+            self.textBrowser.moveCursor(self.textBrowser.textCursor().End)
+            sleep(0.5)
 
 
 if __name__ == '__main__':
