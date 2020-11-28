@@ -25,7 +25,9 @@ def resource_path(*relative_path):
     base_path = getattr(sys, '_MEIPASS', abspath(join(dirname(__file__))))
     return join(base_path, *relative_path).replace("\\", "/")
 
+
 print(resource_path())
+
 
 class MainWindow(QMainWindow, Ui_MainWindow):
 
@@ -158,7 +160,7 @@ class TrayIcon(QSystemTrayIcon):
 
     def other(self):
         self.activated.connect(self.iconClied)
-        self.setIcon(QIcon("icon.ico"))
+        self.setIcon(QIcon(resource_path("icon.ico")))
         self.icon = self.MessageIcon()
         # 设置图标
 
