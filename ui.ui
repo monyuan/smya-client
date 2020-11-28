@@ -90,7 +90,7 @@
      </property>
      <property name="icon">
       <iconset>
-       <normaloff>img/btn_set_normal.png</normaloff>img/btn_set_normal.png</iconset>
+       <normaloff>../../../.designer/backup/img/btn_set_normal.png</normaloff>../../../.designer/backup/img/btn_set_normal.png</iconset>
      </property>
     </widget>
     <widget class="QLabel" name="label">
@@ -173,26 +173,8 @@
       <enum>QTabWidget::Rounded</enum>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
-     <widget class="QWidget" name="tab">
-      <attribute name="title">
-       <string>服务端通知</string>
-      </attribute>
-      <widget class="QProgressBar" name="progressBar">
-       <property name="geometry">
-        <rect>
-         <x>20</x>
-         <y>20</y>
-         <width>118</width>
-         <height>23</height>
-        </rect>
-       </property>
-       <property name="value">
-        <number>24</number>
-       </property>
-      </widget>
-     </widget>
      <widget class="QWidget" name="tab_2">
       <attribute name="title">
        <string>运行日志</string>
@@ -237,14 +219,33 @@
     <widget class="QLabel" name="ad1">
      <property name="geometry">
       <rect>
-       <x>110</x>
-       <y>20</y>
-       <width>191</width>
-       <height>71</height>
+       <x>20</x>
+       <y>10</y>
+       <width>401</width>
+       <height>101</height>
       </rect>
      </property>
      <property name="text">
-      <string>TextLabel</string>
+      <string/>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="show_w_btn">
+     <property name="geometry">
+      <rect>
+       <x>290</x>
+       <y>200</y>
+       <width>0</width>
+       <height>0</height>
+      </rect>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>PushButton</string>
      </property>
     </widget>
    </widget>
