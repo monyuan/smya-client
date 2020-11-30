@@ -1,12 +1,13 @@
 import _thread
 import binascii
 import json
-import sys
-from datetime import datetime
-from time import sleep
 import os
 import re
 import subprocess
+import sys
+from datetime import datetime
+from time import sleep
+
 import paho.mqtt.client as mqtt
 import requests
 from PyQt5.QtCore import QUrl
@@ -14,9 +15,10 @@ from PyQt5.QtGui import QImage, QPixmap, QDesktopServices
 from PyQt5.QtWidgets import QMessageBox
 from pyDes import des, CBC, PAD_PKCS5
 
-SERVER = "http://127.0.0.1:7777"
-SERVER_VERSION = 1
-SERVER_TAG = 1
+# 注意，请保留升级功能，否则不向下兼容的升级会导致应用失效
+SERVER = "http://127.0.0.1:7777"  # 服务器地址
+APP_VERSION = 1  # 当前APP版本号
+APP_TAG = 1  # 系统标记 1：Win10 2：win7 3：ubuntu 16  4：ubuntu 18
 
 
 def log_info(text):
@@ -86,7 +88,7 @@ class Handle(object):
         self.client = None
         self.safe_code = 0
         self.jump = SERVER
-
+    
     def ad(self):
         res = requests.get(SERVER + "/server_ad").json()
         self.jump = res['data']['url']
@@ -94,23 +96,23 @@ class Handle(object):
         img = QImage.fromData(img_url.content)
         self.w.ad1.setPixmap(QPixmap.fromImage(img))
         self.w.ad1.setOpenExternalLinks(True)
-
+    
     def jump_ad(self, data):
         QDesktopServices.openUrl(QUrl(self.jump))
-
+    
     def app_update(self):
         """
         检测是否有新版本，有就升级，不然后导致无法使用,无论如何请保留此功能
         重大BUG、安全风险等都会进行升级
         :return:
         """
-        res = requests.get(SERVER + "/app_update?server_tag=%s" % SERVER_TAG).json()
+        res = requests.get(SERVER + "/app_update?app_version={}&app_tag={}".format(APP_VERSION, APP_TAG)).json()
         if res['code'] != 0: return
         server_version = res['data']['version']
         update_url = res['data']['update_url']
         update_type = res['data']['type']
         update_message = res['data']['message']
-        if int(server_version) > int(SERVER_VERSION):  # 可升级
+        if int(server_version) > int(APP_VERSION):  # 可升级
             if update_type == 1:  # 不向下兼容，必须要升级
                 QMessageBox.information(self.w, "发现新版本！版本号：{}".format(server_version), "{}".format(update_message),
                                         QMessageBox.Ok)
@@ -126,7 +128,7 @@ class Handle(object):
                     # 如果忽略升级
                     pass
         return
-
+    
     def login(self):
         """
         登陆到服务器
@@ -140,7 +142,7 @@ class Handle(object):
         if len(self.safe_code) != 6:
             QMessageBox.critical(self.w, "错误！", "你的安全码错误！")
             return
-
+        
         try:
             self.input_status(True)
             self.connect_message = 0
@@ -160,7 +162,7 @@ class Handle(object):
             print(E)
             self.input_status(False)
             self.w.textBrowser.append(log_error("连接异常，请检查网络后重试！"))
-
+    
     def mqtt_on_connect(self, client, userdata, flags, rc):
         """与服务端建立连接"""
         if rc == 0:
@@ -171,7 +173,7 @@ class Handle(object):
         else:
             self.connect_message += 1
             self.w.textBrowser.append(log_error("掉线重连，第{}次...".format(self.connect_message)))
-
+    
     def mqtt_on_message(self, client, userdata, msg):
         """服务端下发指令"""
         self.w.textBrowser.append(log_info("服务端下发了指令..."))
@@ -184,10 +186,10 @@ class Handle(object):
             Execute(self.w, json_data['command'], json_data['type']).do()
         except:
             self.w.textBrowser.append(log_error("指令解密失败！"))
-
+    
     def connect_server(self):
         """
-        client_id -  你可以自定义
+        client_id
         :return:
         """
         self.client = mqtt.Client(client_id=self.device_id)
@@ -196,7 +198,7 @@ class Handle(object):
         self.client.on_message = self.mqtt_on_message
         self.client.connect(self.server, self.server_port, 60)
         self.client.loop_forever()
-
+    
     def input_status(self, status):
         """
         按钮及输入框的状态
@@ -213,7 +215,7 @@ class Execute:
         self.w = w
         self.command = command
         self.type = command_type
-
+    
     def do(self):
         """执行脚本"""
         dic = {1: self.open_any,
@@ -223,7 +225,7 @@ class Execute:
                5: self.run_any,
                }
         dic[self.type]()
-
+    
     def open_any(self):
         """打开文件或程序"""
         try:
@@ -231,7 +233,7 @@ class Execute:
             self.w.textBrowser.append(log_success("执行成功！"))
         except Exception as E:
             self.w.textBrowser.append(log_error("执行失败：{}".format(E)))
-
+    
     def del_any(self):
         """删除文件"""
         try:
@@ -242,7 +244,7 @@ class Execute:
             self.w.textBrowser.append(log_success("执行成功！"))
         except Exception as E:
             self.w.textBrowser.append(log_error("执行失败：{}".format(E)))
-
+    
     def add_any(self):
         """创建文件"""
         try:
@@ -256,7 +258,7 @@ class Execute:
             self.w.textBrowser.append(log_success("执行成功！"))
         except Exception as E:
             self.w.textBrowser.append(log_error("执行失败：{}".format(E)))
-
+    
     def kill_any(self):
         """结束进程"""
         try:
@@ -267,7 +269,7 @@ class Execute:
             self.w.textBrowser.append(log_success("执行成功！"))
         except Exception as E:
             self.w.textBrowser.append(log_error("执行失败：{}".format(E)))
-
+    
     def run_any(self):
         """执行任意脚本"""
         try:
