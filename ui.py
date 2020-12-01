@@ -91,6 +91,7 @@ class Ui_MainWindow(object):
         self.safe_code.setObjectName("safe_code")
         self.ad1 = QtWidgets.QLabel(self.widget_2)
         self.ad1.setGeometry(QtCore.QRect(20, 10, 401, 101))
+        self.ad1.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.ad1.setText("")
         self.ad1.setObjectName("ad1")
         self.show_w_btn = QtWidgets.QPushButton(self.widget_2)
