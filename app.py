@@ -192,4 +192,4 @@ if __name__ == '__main__':
     sys.exit(app.exec_())
 
 # build
-# pyinstaller --clean -w app.py -i icon.ico --add-data "img;img" --add-data "icon.ico;./"
+# pyinstaller --uac-admin --clean -w -i icon.ico --add-data "img;img" --add-data "icon.ico;./" app.py

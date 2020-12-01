@@ -155,6 +155,7 @@ class Handle(object):
             self.w.textBrowser.append(log_info("开始连接服务器..."))
             res = login_to_server(device_id, self.safe_code)
             if res["code"] == 0:
+                print(res)
                 server = res["data"]["server"]  # this is subscribe server addr
                 subscribe = res["data"]["subscribe"]  # this is subscribe topic
                 self.subscribe = subscribe
@@ -162,6 +163,7 @@ class Handle(object):
                 self.device_id = device_id
                 _thread.start_new_thread(self.connect_server, ())
             else:
+                print("#33")
                 self.w.textBrowser.append(log_error(res["msg"]))
                 self.input_status(False)
         except Exception as E:
