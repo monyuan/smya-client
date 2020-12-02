@@ -17,7 +17,7 @@ from pyDes import des, CBC, PAD_PKCS5
 
 # 注意，请保留升级功能，否则不向下兼容的升级会导致应用失效
 SERVER = "https://smya.cn"  # 服务器地址
-APP_VERSION = 1  # 当前APP版本号
+APP_VERSION = 2  # 当前APP版本号
 APP_TAG = 1  # 系统标记 1：Win10 -  2：win7  -  3：ubuntu 16  -  4：ubuntu 18
 
 
@@ -114,27 +114,27 @@ class Handle(object):
         """
         try:
             res = requests.get(SERVER + "/app_update?app_version={}&app_tag={}".format(APP_VERSION, APP_TAG)).json()
-            if res['code'] != 0: return
-            server_version = res['data']['version']
-            update_url = SERVER + "/download"
-            update_type = res['data']['type']
-            update_message = res['data']['message']
-            if int(server_version) > int(APP_VERSION):  # 可升级
-                if update_type == 1:  # 不向下兼容，必须要升级
-                    QMessageBox.information(self.w, "发现新版本！版本号：{}".format(server_version), "{}".format(update_message),
-                                            QMessageBox.Ok)
-                    QDesktopServices.openUrl(QUrl(update_url))
-                    sys.exit()
-                else:  # 可选是否升级
-                    reply = QMessageBox.information(self.w, "发现新版本！", "{}".format(update_message),
-                                                    QMessageBox.Ok, QMessageBox.No)
-                    if reply == QMessageBox.Ok:
+            if res['code'] == 0:
+                server_version = res['data']['version']
+                update_url = SERVER + "/download"
+                update_type = res['data']['type']
+                update_message = res['data']['message']
+                if int(server_version) > int(APP_VERSION):  # 可升级
+                    if update_type == 1:  # 不向下兼容，必须要升级
+                        QMessageBox.information(self.w, "发现新版本！版本号：{}".format(server_version),
+                                                "{}".format(update_message),
+                                                QMessageBox.Ok)
                         QDesktopServices.openUrl(QUrl(update_url))
                         sys.exit()
-                    else:
-                        # 如果忽略升级
-                        pass
-            return
+                    else:  # 可选是否升级
+                        reply = QMessageBox.information(self.w, "发现新版本！", "{}".format(update_message),
+                                                        QMessageBox.Ok, QMessageBox.No)
+                        if reply == QMessageBox.Ok:
+                            QDesktopServices.openUrl(QUrl(update_url))
+                            sys.exit()
+                        else:
+                            # 如果忽略升级
+                            pass
         except:
             sys.exit()
     
