@@ -1,8 +1,9 @@
 import _thread
 import sys
 from time import sleep
-from os.path import abspath, dirname, join
-
+from os.path import abspath, dirname, join, exists
+from os import getcwd, getenv
+import json
 from PyQt5.QtCore import QSize
 from PyQt5.QtGui import QColor, QIcon, QCursor
 from PyQt5.QtWidgets import (QGraphicsDropShadowEffect,
@@ -87,6 +88,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setWindowIcon(QIcon(resource_path("icon.ico")))
         self.setWindowTitle('神秘鸭')
         self.textBrowser.append("欢迎使用神秘鸭 smya.cn")
+        self.read_login_info()
         _thread.start_new_thread(self.handler.ad, ())
         self.handler.app_update()
 
@@ -100,6 +102,24 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.login.clicked.connect(self.handler.login)
         self.ad1.mousePressEvent = self.handler.jump_ad
         _thread.start_new_thread(self.info_window_scroll, ())
+
+    def read_login_info(self):
+        login_file = join(getenv('TEMP'), 'smya.json')
+        if exists(login_file) is True:
+            with open(login_file, 'r') as f:
+                info = json.loads(f.readline())
+                try:
+                    device_id = info['device_id']
+                    safe_code = info['safe_code']
+
+                    if len(device_id) and len(safe_code) > 5:
+                        self.device_id.setText(device_id)
+                        self.safe_code.setText(safe_code)
+                        self.handler.login()
+                except:
+                    pass
+
+                    pass
 
     def send_key_event(self, data):
         self.show()
@@ -192,4 +212,4 @@ if __name__ == '__main__':
     sys.exit(app.exec_())
 
 # build
-# pyinstaller --uac-admin --clean -w -y -i icon.ico --add-data "img;img" --add-data "icon.ico;./" app.spec
+# pyinstaller --clean -y -i icon.ico --add-data "img;img" --add-data "icon.ico;./" SmyaService.py
