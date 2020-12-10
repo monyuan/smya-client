@@ -6,7 +6,6 @@ import re
 import subprocess
 import sys
 from datetime import datetime
-from time import sleep
 
 import paho.mqtt.client as mqtt
 import requests
