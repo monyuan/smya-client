@@ -1,4 +1,5 @@
 import _thread
+import os
 import sys
 from time import sleep
 from os.path import abspath, dirname, join, exists
@@ -104,11 +105,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         _thread.start_new_thread(self.info_window_scroll, ())
 
     def read_login_info(self):
-        login_file = join(getenv('TEMP'), 'smya.json')
-        if exists(login_file) is True:
-            with open(login_file, 'r') as f:
-                info = json.loads(f.readline())
-                try:
+        login_file = join(os.path.expanduser('~'), 'smya.json')
+        try:
+            if exists(login_file) is True:
+                with open(login_file, 'r') as f:
+                    info = json.loads(f.readline())
                     device_id = info['device_id']
                     safe_code = info['safe_code']
 
@@ -116,10 +117,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                         self.device_id.setText(device_id)
                         self.safe_code.setText(safe_code)
                         self.handler.login()
-                except:
-                    pass
-
-                    pass
+        except:
+            pass
 
     def send_key_event(self, data):
         self.show()
@@ -212,4 +211,4 @@ if __name__ == '__main__':
     sys.exit(app.exec_())
 
 # build
-# pyinstaller --clean -y -i icon.ico --add-data "img;img" --add-data "icon.ico;./" SmyaService.py
+# pyinstaller --clean -y -w -i icon.ico --add-data "img;img" --add-data "icon.ico;./" SmyaService.py

@@ -9,6 +9,7 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from handle import APP_VERSION
 
 
 class Ui_MainWindow(object):
@@ -50,7 +51,8 @@ class Ui_MainWindow(object):
         self.pushButton_3.setGeometry(QtCore.QRect(0, 0, 31, 31))
         self.pushButton_3.setText("")
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap("../../../.designer/backup/img/btn_set_normal.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap("../../../.designer/backup/img/btn_set_normal.png"), QtGui.QIcon.Normal,
+                       QtGui.QIcon.Off)
         self.pushButton_3.setIcon(icon)
         self.pushButton_3.setObjectName("pushButton_3")
         self.label = QtWidgets.QLabel(self.widget)
@@ -113,7 +115,7 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.label.setText(_translate("MainWindow", "神秘鸭 smya.cn"))
+        self.label.setText(_translate("MainWindow", "神秘鸭 v{}".format(APP_VERSION)))
         self.login.setText(_translate("MainWindow", "连接服务器"))
         self.device_id.setToolTip(_translate("MainWindow", "您的设备ID"))
         self.device_id.setPlaceholderText(_translate("MainWindow", "你的设备ID"))
