@@ -16,7 +16,7 @@ from pyDes import des, CBC, PAD_PKCS5
 
 # 注意，请保留升级功能，否则不向下兼容的升级会导致应用失效
 SERVER = "https://smya.cn"  # 服务器地址
-APP_VERSION = 5  # 当前APP版本号
+APP_VERSION = 6  # 当前APP版本号
 APP_TAG = 1  # 系统标记 1：Win10 -  2：win7  -  3：ubuntu 16  -  4：ubuntu 18
 
 
