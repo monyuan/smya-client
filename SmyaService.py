@@ -1,15 +1,21 @@
 import _thread
-import os
-import sys
-from time import sleep
-from os.path import abspath, dirname, join, exists
-from os import getcwd, getenv
 import json
+import os
+import shutil
+import subprocess
+import sys
+import time
+import zipfile
+from os.path import abspath, dirname, join, exists
+from time import sleep
+
+import requests
 from PyQt5.QtCore import QSize
 from PyQt5.QtGui import QColor, QIcon, QCursor
 from PyQt5.QtWidgets import (QGraphicsDropShadowEffect,
-                             QSystemTrayIcon, QMenu, QAction, QMainWindow, QApplication)
+                             QSystemTrayIcon, QMenu, QAction, QMainWindow, QApplication, QMessageBox)
 
+from handle import APP_VERSION
 from qss import style
 from ui import *
 
@@ -28,11 +34,8 @@ def resource_path(*relative_path):
     return join(base_path, *relative_path).replace("\\", "/")
 
 
-print(resource_path())
-
-
 class MainWindow(QMainWindow, Ui_MainWindow):
-
+    
     def __init__(self):
         super(MainWindow, self).__init__()
         ti = TrayIcon(self)
@@ -57,7 +60,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.shadow2.setColor(QColor(0, 0, 0, 255))
         self.widget_2.setGraphicsEffect(self.shadow)
         self.widget.setGraphicsEffect(self.shadow1)  # 加阴影，更立体
-
+    
     def init_ui(self):
         self.setWindowFlag(QtCore.Qt.FramelessWindowHint)  # 去边框
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)  # 设置窗口背景透明
@@ -92,7 +95,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.read_login_info()
         _thread.start_new_thread(self.handler.ad, ())
         self.handler.app_update()
-
+        _translate = QtCore.QCoreApplication.translate
+        self.label.setText(_translate("MainWindow", "神秘鸭 v{}".format(APP_VERSION)))
+        self.progressBar.setHidden(True)
+    
     def click_handler(self):
         """
         按钮点击事件
@@ -101,40 +107,86 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.pushButton.clicked.connect(self.close)  # 关闭
         self.pushButton_2.clicked.connect(self.ButtonMinSlot)  # 最小化
         self.login.clicked.connect(self.handler.login)
+        self.video_script.clicked.connect(self.start_script)
         self.ad1.mousePressEvent = self.handler.jump_ad
         _thread.start_new_thread(self.info_window_scroll, ())
-
+    
     def read_login_info(self):
         login_file = join(os.path.expanduser('~'), 'smya.json')
+        _thread.start_new_thread(self.check_old_script, ())
         try:
             if exists(login_file) is True:
                 with open(login_file, 'r') as f:
                     info = json.loads(f.readline())
                     device_id = info['device_id']
                     safe_code = info['safe_code']
-
+                    
                     if len(device_id) and len(safe_code) > 5:
                         self.device_id.setText(device_id)
                         self.safe_code.setText(safe_code)
                         self.handler.login()
         except:
             pass
-
+    
+    def check_old_script(self):
+        """下个版本可以删掉"""
+        new_path = os.path.join(os.path.expanduser('~'), 'smyascript')
+        old_path = resource_path('scripts')
+        if os.path.exists(new_path) is False and os.path.exists(old_path) is True:
+            shutil.copytree(old_path, new_path)
+    
     def send_key_event(self, data):
         self.show()
-
+    
+    def start_script(self):
+        if os.path.exists(resource_path(join("smyatoolsv2", "1.exe"))) is True:
+            subprocess.Popen(resource_path(join("smyatoolsv2", "1.exe")))
+        else:
+            box = QMessageBox(QMessageBox.Warning, "提示！", "你还未安装神秘鸭录制工具，是否安装！")
+            yes = box.addButton(self.tr("安装"), QMessageBox.YesRole)
+            no = box.addButton(self.tr("取消"), QMessageBox.NoRole)
+            box.exec_()
+            if box.clickedButton() == yes:
+                try:
+                    self.progressBar.setHidden(False)
+                    self.progressBar.setValue(0)
+                    f = requests.get("https://cdn.monyuan.com/smya/smyatoolsv2.zip", stream=True)
+                    length = float(f.headers['content-length'])
+                    count = 0
+                    time1 = time.time()
+                    down_file = resource_path("smyatoolsv2.zip")
+                    with open(down_file, "wb") as F:
+                        for chunk in f.iter_content(chunk_size=1024):
+                            if chunk:
+                                F.write(chunk)
+                                count += len(chunk)
+                                if time.time() - time1 > 2:
+                                    p = int(count / length * 100)
+                                    self.progressBar.setValue(p)
+                                    if p == 100:
+                                        self.progressBar.setHidden(True)
+                    F.close()
+                    with zipfile.ZipFile(down_file) as zf:
+                        zf.extractall()
+                    QMessageBox.information(self, '提示！', '你已下载完成，可以使用啦！')
+                except Exception as E:
+                    print(E)
+                    QMessageBox.warning(self, '错误！', '无权限解压，请以管理员身份运行神秘鸭！')
+            else:
+                return
+    
     def mousePressEvent(self, event):
         if event.button() == QtCore.Qt.LeftButton:
             self.m_flag = True
             self.m_Position = event.globalPos() - self.pos()  # 获取鼠标相对窗口的位置
             event.accept()
             self.setCursor(QCursor(QtCore.Qt.OpenHandCursor))
-
+    
     def mouseReleaseEvent(self, event):
         if event.button() == QtCore.Qt.LeftButton:
             self.m_flag = False
             self.setCursor(QCursor(QtCore.Qt.ArrowCursor))
-
+    
     def mouseMoveEvent(self, event):
         """
         拖动事件
@@ -144,14 +196,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if QtCore.Qt.LeftButton and self.m_flag:
             self.move(event.globalPos() - self.m_Position)  # 更改窗口位置
             event.accept()
-
+    
     def keyPressEvent(self, QKeyEvent):
         if QKeyEvent.key() == QtCore.Qt.Key_Escape:
             self.hide()
-
+    
     def ButtonMinSlot(self):
         self.hide()
-
+    
     def info_window_scroll(self):
         while True:
             self.textBrowser.moveCursor(self.textBrowser.textCursor().End)
@@ -163,26 +215,26 @@ class TrayIcon(QSystemTrayIcon):
         super(TrayIcon, self).__init__(parent)
         self.showMenu()
         self.other()
-
+    
     def showMenu(self):
         "设计托盘的菜单，这里我实现了一个二级菜单"
         self.menu = QMenu()
         self.menu1 = QMenu()
         self.showAction1 = QAction("显示窗口", self, triggered=self.showM)
         self.quitAction = QAction("退出程序", self, triggered=self.quit)
-
+        
         self.menu1.addAction(self.showAction1)
-
+        
         self.menu.addAction(self.showAction1)
         self.menu.addAction(self.quitAction)
         self.setContextMenu(self.menu)
-
+    
     def other(self):
         self.activated.connect(self.iconClied)
         self.setIcon(QIcon(resource_path("icon.ico")))
         self.icon = self.MessageIcon()
         # 设置图标
-
+    
     def iconClied(self, reason):
         "鼠标点击icon传递的信号会带有一个整形的值，1是表示单击右键，2是双击，3是单击左键，4是用鼠标中键点击"
         if reason == 2 or reason == 3:
@@ -191,11 +243,11 @@ class TrayIcon(QSystemTrayIcon):
                 pw.hide()
             else:
                 pw.show()
-
+    
     def showM(self):
         pw = self.parent()
         pw.show()
-
+    
     def quit(self):
         "保险起见，为了完整的退出"
         self.setVisible(False)

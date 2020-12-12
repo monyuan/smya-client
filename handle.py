@@ -6,6 +6,7 @@ import re
 import subprocess
 import sys
 from datetime import datetime
+from os.path import abspath, join, dirname
 
 import paho.mqtt.client as mqtt
 import requests
@@ -16,8 +17,13 @@ from pyDes import des, CBC, PAD_PKCS5
 
 # 注意，请保留升级功能，否则不向下兼容的升级会导致应用失效
 SERVER = "https://smya.cn"  # 服务器地址
-APP_VERSION = 6  # 当前APP版本号
+APP_VERSION = 8  # 当前APP版本号
 APP_TAG = 1  # 系统标记 1：Win10 -  2：win7  -  3：ubuntu 16  -  4：ubuntu 18
+
+
+def resource_path(*relative_path):
+    base_path = getattr(sys, '_MEIPASS', abspath(join(dirname(__file__))))
+    return join(base_path, *relative_path).replace("\\", "/")
 
 
 def log_info(text):
@@ -93,10 +99,10 @@ class Handle(object):
         self.client = None
         self.safe_code = 0
         self.jump = SERVER
-
+    
     def ad(self):
         _thread.start_new_thread(self.show_ad, ())
-
+    
     def show_ad(self):
         try:
             res = requests.get(SERVER + "/client_ad").json()
@@ -107,10 +113,10 @@ class Handle(object):
             self.w.ad1.setOpenExternalLinks(True)
         except:
             pass
-
+    
     def jump_ad(self, data):
         QDesktopServices.openUrl(QUrl(self.jump))
-
+    
     def app_update(self):
         """
         检测是否有新版本，有就升级，不然后导致无法使用,无论如何请保留此功能
@@ -142,7 +148,7 @@ class Handle(object):
                             pass
         except:
             sys.exit()
-
+    
     def login(self):
         """
         登陆到服务器
@@ -156,7 +162,7 @@ class Handle(object):
         if len(self.safe_code) != 6:
             QMessageBox.critical(self.w, "错误！", "你的安全码错误！")
             return
-
+        
         try:
             self.input_status(True)
             self.connect_message = 0
@@ -177,7 +183,7 @@ class Handle(object):
             print(E)
             self.input_status(False)
             self.w.textBrowser.append(log_error("连接异常，请检查网络后重试！"))
-
+    
     def mqtt_on_connect(self, client, userdata, flags, rc):
         """与服务端建立连接"""
         print(rc)
@@ -190,7 +196,7 @@ class Handle(object):
             self.w.textBrowser.append(log_error("掉线重连，第{}次...".format(self.connect_message)))
             self.client.loop_stop()
             self.connect_server()
-
+    
     def mqtt_on_message(self, client, userdata, msg):
         """服务端下发指令"""
         self.w.textBrowser.append(log_info("服务端下发了指令..."))
@@ -201,9 +207,10 @@ class Handle(object):
             command_name = json_data['command_name']
             self.w.textBrowser.append(log_info("执行[{}]指令...".format(command_name)))
             Execute(self.w, json_data['command'], json_data['type']).do()
-        except:
-            self.w.textBrowser.append(log_error("指令解密失败！"))
-
+        except Exception as E:
+            print(E)
+            self.w.textBrowser.append(log_error("指令解密失败！{}".format(E)))
+    
     def connect_server(self):
         """
         client_id
@@ -215,7 +222,7 @@ class Handle(object):
         self.client.on_message = self.mqtt_on_message
         self.client.connect(self.server, self.server_port, 60)
         self.client.loop_start()
-
+    
     def input_status(self, status):
         """
         按钮及输入框的状态
@@ -232,7 +239,7 @@ class Execute:
         self.w = w
         self.command = command
         self.type = command_type
-
+    
     def do(self):
         """执行脚本"""
         dic = {1: self.open_any,
@@ -240,9 +247,10 @@ class Execute:
                3: self.add_any,
                4: self.kill_any,
                5: self.run_any,
+               6: self.start_script
                }
         dic[self.type]()
-
+    
     def open_any(self):
         """打开文件或程序"""
         try:
@@ -250,7 +258,7 @@ class Execute:
             self.w.textBrowser.append(log_success("执行成功！"))
         except Exception as E:
             self.w.textBrowser.append(log_error("执行失败：{}".format(E)))
-
+    
     def del_any(self):
         """删除文件"""
         try:
@@ -261,7 +269,7 @@ class Execute:
             self.w.textBrowser.append(log_success("执行成功！"))
         except Exception as E:
             self.w.textBrowser.append(log_error("执行失败：{}".format(E)))
-
+    
     def add_any(self):
         """创建文件"""
         try:
@@ -275,7 +283,7 @@ class Execute:
             self.w.textBrowser.append(log_success("执行成功！"))
         except Exception as E:
             self.w.textBrowser.append(log_error("执行失败：{}".format(E)))
-
+    
     def kill_any(self):
         """结束进程"""
         try:
@@ -286,11 +294,21 @@ class Execute:
             self.w.textBrowser.append(log_success("执行成功！"))
         except Exception as E:
             self.w.textBrowser.append(log_error("执行失败：{}".format(E)))
-
+    
     def run_any(self):
         """执行任意脚本"""
         try:
             subprocess.Popen("{}".format(self.command), close_fds=True)
+            self.w.textBrowser.append(log_success("执行成功！"))
+        except Exception as E:
+            self.w.textBrowser.append(log_error("执行失败：{}".format(E)))
+    
+    def start_script(self):
+        """执行回放脚本"""
+        try:
+            script_path = join(os.path.expanduser('~'), 'smyascript', "{}.txt".format(self.command))
+            print(resource_path(join("smyatoolsv2", "1.exe {}".format(script_path))))
+            subprocess.Popen(resource_path(join("smyatoolsv2", "1.exe {}".format(script_path))))
             self.w.textBrowser.append(log_success("执行成功！"))
         except Exception as E:
             self.w.textBrowser.append(log_error("执行失败：{}".format(E)))
