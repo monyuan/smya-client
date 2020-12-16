@@ -4,7 +4,7 @@ block_cipher = None
 
 
 a = Analysis(['SmyaService.py'],
-             pathex=['C:\\Users\\os\\Desktop\\myself\\smya-client'],
+             pathex=['C:\\Users\\Mon\\Desktop\\SMYA\\smya-client'],
              binaries=[],
              datas=[('img', 'img'), ('icon.ico', './')],
              hiddenimports=[],
@@ -26,7 +26,7 @@ exe = EXE(pyz,
           bootloader_ignore_signals=False,
           strip=False,
           upx=True,
-          console=True , icon='icon.ico')
+          console=False , icon='icon.ico')
 coll = COLLECT(exe,
                a.binaries,
                a.zipfiles,
