@@ -149,18 +149,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.show()
 
     def start_script(self):
-        tools_path = os.path.join(os.path.expanduser('~'), 'smyatoolsv2')
-        if os.path.exists(join(tools_path, "1.exe")) is True:
-            subprocess.Popen(join(tools_path, "1.exe"))
-        else:
-            if os.path.exists(tools_path) is True:
-                os.rmdir(tools_path)
-            box = QMessageBox(QMessageBox.Warning, "提示！", "神秘鸭录制工具未安装或需要更新，现在是否安装！")
-            yes = box.addButton(self.tr("安装"), QMessageBox.YesRole)
-            no = box.addButton(self.tr("取消"), QMessageBox.NoRole)
-            box.exec_()
-            if box.clickedButton() == yes:
-                try:
+        try:
+            tools_path = os.path.join(os.path.expanduser('~'), 'smyatoolsv2')
+            if os.path.exists(join(tools_path, "1.exe")) is True:
+                subprocess.Popen(join(tools_path, "1.exe"))
+            else:
+                if os.path.exists(tools_path) is True:
+                    os.rmdir(tools_path)
+                box = QMessageBox(QMessageBox.Warning, "提示！", "神秘鸭录制工具未安装或需要更新，现在是否安装！")
+                yes = box.addButton(self.tr("安装"), QMessageBox.YesRole)
+                no = box.addButton(self.tr("取消"), QMessageBox.NoRole)
+                box.exec_()
+                if box.clickedButton() == yes:
                     self.progressBar.setHidden(False)
                     self.progressBar.setValue(0)
                     f = requests.get("https://cdn.monyuan.com/smya/smyatoolsv2.zip", stream=True)
@@ -186,13 +186,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     zipFile.close()
                     os.remove(down_file)
                     QMessageBox.information(self, '提示！', '你已下载完成，可以使用啦！')
-                except Exception as E:
-                    self.textBrowser.append(
-                        '<span style="color: red">{} {}</span>'.format(datetime.strftime(datetime.now(), '%H:%M:%S'),
-                                                                       E))
-                    QMessageBox.warning(self, '错误！', '出现问题，请看运行日志！')
-            else:
-                return
+        except Exception as E:
+            self.textBrowser.append(
+                '<span style="color: red">{} {}</span>'.format(datetime.strftime(datetime.now(), '%H:%M:%S'),
+                                                               E))
+            QMessageBox.warning(self, '错误！', '出现问题，请看运行日志！')
 
     def mousePressEvent(self, event):
         if event.button() == QtCore.Qt.LeftButton:
