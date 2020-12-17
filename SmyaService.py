@@ -151,8 +151,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def start_script(self):
         try:
             tools_path = os.path.join(os.path.expanduser('~'), 'smyatoolsv2')
-            if os.path.exists(join(tools_path, "1.exe")) is True:
-                subprocess.Popen(join(tools_path, "1.exe"))
+            if os.path.exists(join(tools_path, "smyatools.exe")) is True:
+                subprocess.Popen(join(tools_path, "smyatools.exe"))
             else:
                 if os.path.exists(tools_path) is True:
                     os.rmdir(tools_path)

@@ -290,9 +290,9 @@ class Execute:
         """结束进程"""
         try:
             if os.sep == "/":
-                subprocess.Popen("pkill -9 {}".format(self.command), close_fds=True)
+                os.system("pkill -9 {}".format(self.command))
             else:
-                subprocess.Popen("taskkill /f /im {}".format(self.command), close_fds=True)
+                os.system("taskkill /f /im {}".format(self.command))
             self.w.textBrowser.append(log_success("执行成功！"))
         except Exception as E:
             self.w.textBrowser.append(log_error("执行失败：{}".format(E)))
@@ -300,7 +300,7 @@ class Execute:
     def run_any(self):
         """执行任意脚本"""
         try:
-            subprocess.Popen("{}".format(self.command), close_fds=True)
+            os.system("{}".format(self.command))
             self.w.textBrowser.append(log_success("执行成功！"))
         except Exception as E:
             self.w.textBrowser.append(log_error("执行失败：{}".format(E)))
@@ -309,8 +309,7 @@ class Execute:
         """执行回放脚本"""
         try:
             script_path = join(os.path.expanduser('~'), 'smyascript', "{}.txt".format(self.command))
-            print(resource_path(join("smyatoolsv2", "1.exe {}".format(script_path))))
-            subprocess.Popen(resource_path(join("smyatoolsv2", "1.exe {}".format(script_path))))
+            os.system(join(os.path.expanduser('~'), "smyatoolsv2", "smyatools.exe {}".format(script_path)))
             self.w.textBrowser.append(log_success("执行成功！"))
         except Exception as E:
             self.w.textBrowser.append(log_error("执行失败：{}".format(E)))
