@@ -4,7 +4,7 @@ block_cipher = None
 
 
 a = Analysis(['SmyaService.py'],
-             pathex=['C:\\Users\\Mon\\Desktop\\SMYA\\smya-client'],
+             pathex=['C:\\Users\\os\\Desktop\\myself\\smya-client'],
              binaries=[],
              datas=[('img', 'img'), ('icon.ico', './')],
              hiddenimports=[],
