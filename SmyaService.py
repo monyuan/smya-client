@@ -99,7 +99,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         _translate = QtCore.QCoreApplication.translate
         self.label.setText(_translate("MainWindow", "神秘鸭 v{}".format(APP_VERSION)))
         self.progressBar.setHidden(True)
-    
+        self.handler.app_update()
+        
     def click_handler(self):
         """
         按钮点击事件

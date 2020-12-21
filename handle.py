@@ -144,15 +144,14 @@ class Handle(object):
                         else:
                             # 如果忽略升级
                             pass
-        except:
-            sys.exit()
+        except Exception as E:
+            print(E)
     
     def login(self):
         """
         登陆到服务器
         :return:
         """
-        self.app_update()
         device_id = self.w.device_id.text().strip()
         self.safe_code = self.w.safe_code.text().strip()
         if len(device_id) != 32:
@@ -181,7 +180,7 @@ class Handle(object):
         except Exception as E:
             print(E)
             self.input_status(False)
-            self.w.textBrowser.append(log_error("连接异常，请检查网络后重试！"))
+            self.w.textBrowser.append(log_error("连接异常，请检查网络后重试！ {}".format(E)))
     
     def mqtt_on_connect(self, client, userdata, flags, rc):
         """与服务端建立连接"""
@@ -192,8 +191,8 @@ class Handle(object):
         else:
             self.connect_message += 1
             self.w.textBrowser.append(log_error("掉线重连，第{}次...".format(self.connect_message)))
-            time.sleep(2)
             self.client.loop_stop()
+            time.sleep(2)
             self.connect_server()
     
     def mqtt_on_message(self, client, userdata, msg):
