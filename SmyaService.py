@@ -100,7 +100,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.label.setText(_translate("MainWindow", "神秘鸭 v{}".format(APP_VERSION)))
         self.progressBar.setHidden(True)
         self.handler.app_update()
-        
+    
     def click_handler(self):
         """
         按钮点击事件
@@ -111,7 +111,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.login.clicked.connect(self.handler.login)
         self.video_script.clicked.connect(self.start_script)
         self.ad1.mousePressEvent = self.handler.jump_ad
+        self.checkBox.stateChanged.connect(self.select)
         _thread.start_new_thread(self.info_window_scroll, ())
+    
+    def select(self):
+        with open(join(os.path.expanduser('~'), 'smya_mode.ini'), "w") as F:
+            F.write("{}".format(self.checkBox.isChecked()))
     
     def exit_app(self):
         box = QMessageBox(QMessageBox.Information, "提示！", "你是要退出还是最小化？")

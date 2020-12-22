@@ -184,6 +184,7 @@ class Handle(object):
     
     def mqtt_on_connect(self, client, userdata, flags, rc):
         """与服务端建立连接"""
+        print(rc)
         if rc == 0:
             client.subscribe('client/{}'.format(self.subscribe), qos=1)
             self.w.textBrowser.append(log_success("正在建立连接，请等待..."))
@@ -237,6 +238,16 @@ class Execute:
         self.w = w
         self.command = command
         self.type = command_type
+        mode_path = join(os.path.expanduser('~'), 'smya_mode.ini')
+        if os.path.exists(mode_path) is False:
+            with open(mode_path, "w") as f:
+                f.write("False")
+                self.model = "False"
+        else:
+            with open(join(os.path.expanduser('~'), 'smya_mode.ini'), "r") as F:
+                f = F.readline()
+                self.model = f
+        F.close()
     
     def do(self):
         """执行脚本"""
@@ -286,9 +297,14 @@ class Execute:
         """结束进程"""
         try:
             if os.sep == "/":
-                os.system("pkill -9 {}".format(self.command))
+                shell = "pkill -9 {}".format(self.command)
             else:
-                os.system("taskkill /f /im {}".format(self.command))
+                shell = "taskkill /f /im {}".format(self.command)
+            if self.model == "False":
+                subprocess.Popen(shell)
+            else:
+                os.system(shell)
+            
             self.w.textBrowser.append(log_success("执行成功！"))
         except Exception as E:
             self.w.textBrowser.append(log_error("执行失败：{}".format(E)))
@@ -296,7 +312,10 @@ class Execute:
     def run_any(self):
         """执行任意脚本"""
         try:
-            os.system("{}".format(self.command))
+            if self.model == "False":
+                subprocess.Popen("{}".format(self.command))
+            else:
+                os.system("{}".format(self.command))
             self.w.textBrowser.append(log_success("执行成功！"))
         except Exception as E:
             self.w.textBrowser.append(log_error("执行失败：{}".format(E)))
@@ -306,7 +325,10 @@ class Execute:
         try:
             script_path = join(os.path.expanduser('~'), 'smyascript', "{}.txt".format(self.command))
             tool_path = join(os.path.expanduser('~'), "smyatoolsv{}".format(APP_TOOLS_VERSION), "smyatools.exe")
-            _thread.start_new_thread(subprocess.Popen, ("{} {}".format(tool_path, script_path),))
+            if self.model == "False":
+                subprocess.call("{} {}".format(tool_path, script_path), shell=True)
+            else:
+                os.system("{} {}".format(tool_path, script_path))
             self.w.textBrowser.append(log_success("执行成功！"))
         except Exception as E:
             self.w.textBrowser.append(log_error("执行失败：{}".format(E)))

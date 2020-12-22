@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>471</width>
-    <height>599</height>
+    <height>625</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -119,7 +119,7 @@
       <x>10</x>
       <y>40</y>
       <width>441</width>
-      <height>531</height>
+      <height>551</height>
      </rect>
     </property>
     <widget class="QPushButton" name="login">
@@ -275,6 +275,19 @@
      </property>
      <property name="value">
       <number>24</number>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="checkBox">
+     <property name="geometry">
+      <rect>
+       <x>60</x>
+       <y>520</y>
+       <width>321</width>
+       <height>19</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>强力模式(锁屏后也可执行，如有异常请关闭)</string>
      </property>
     </widget>
    </widget>

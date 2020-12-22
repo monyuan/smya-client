@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(471, 599)
+        MainWindow.resize(471, 625)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.widget = QtWidgets.QWidget(self.centralwidget)
@@ -62,7 +62,7 @@ class Ui_MainWindow(object):
         self.label.setSizePolicy(sizePolicy)
         self.label.setObjectName("label")
         self.widget_2 = QtWidgets.QWidget(self.centralwidget)
-        self.widget_2.setGeometry(QtCore.QRect(10, 40, 441, 531))
+        self.widget_2.setGeometry(QtCore.QRect(10, 40, 441, 551))
         self.widget_2.setObjectName("widget_2")
         self.login = QtWidgets.QPushButton(self.widget_2)
         self.login.setGeometry(QtCore.QRect(282, 132, 141, 61))
@@ -105,6 +105,9 @@ class Ui_MainWindow(object):
         self.progressBar.setGeometry(QtCore.QRect(120, 220, 141, 20))
         self.progressBar.setProperty("value", 24)
         self.progressBar.setObjectName("progressBar")
+        self.checkBox = QtWidgets.QCheckBox(self.widget_2)
+        self.checkBox.setGeometry(QtCore.QRect(60, 520, 321, 19))
+        self.checkBox.setObjectName("checkBox")
         self.widget_2.raise_()
         self.widget.raise_()
         MainWindow.setCentralWidget(self.centralwidget)
@@ -129,3 +132,4 @@ class Ui_MainWindow(object):
         self.safe_code.setPlaceholderText(_translate("MainWindow", "你的设备安全码"))
         self.show_w_btn.setText(_translate("MainWindow", "PushButton"))
         self.video_script.setText(_translate("MainWindow", "录制脚本"))
+        self.checkBox.setText(_translate("MainWindow", "强力模式(锁屏后也可执行，如有异常请关闭)"))

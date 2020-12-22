@@ -88,23 +88,6 @@ QPushButton#btnMenu_Close:hover{
     background-color: qlineargradient(spread:pad, x1:0, y1:1, x2:0, y2:0, stop:0 rgba(238, 0, 0, 128), stop:1 rgba(238, 44, 44, 255));
 }
 
-QCheckBox {
-    spacing: 2px;
-}
-
-QCheckBox::indicator {
-    width: 20px;
-    height: 20px;
-}
-
-QCheckBox::indicator:unchecked {
-    image: url(:/image/checkbox_unchecked.png);
-}
-
-QCheckBox::indicator:checked {
-    image: url(:/image/checkbox_checked.png);
-}
-
 QRadioButton {
     spacing: 2px;
 }
