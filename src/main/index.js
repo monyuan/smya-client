@@ -1,70 +1,41 @@
 'use strict'
 
-import { app, BrowserWindow } from 'electron'
+import { app } from 'electron'
+import initWindow from './services/windowManager'
+import DisableButton from './config/DisableButton'
+import electronDevtoolsInstaller, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 
-/**
- * Set `__static` path to static files in production
- * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-static-assets.html
- */
-if (process.env.NODE_ENV !== 'development') {
-  global.__static = require('path').join(__dirname, '/static').replace(/\\/g, '\\\\')
+function onAppReady () {
+  initWindow()
+  DisableButton.Disablef12()
+  if (process.env.NODE_ENV === 'development') {
+    electronDevtoolsInstaller(VUEJS_DEVTOOLS)
+      .then((name) => console.log(`installed: ${name}`))
+      .catch(err => console.log('Unable to install `vue-devtools`: \n', err))
+  }
 }
-
-let mainWindow
-const winURL = process.env.NODE_ENV === 'development'
-  ? `http://localhost:9080`
-  : `file://${__dirname}/index.html`
-
-function createWindow () {
-  /**
-   * Initial window options
-   */
-  mainWindow = new BrowserWindow({
-    // height: 563,
-    // useContentSize: true,
-    // width: 1000,
-    webPreferences: {
-      nodeIntegration: true
-    }
-  })
-  mainWindow.maximize()
-  mainWindow.loadURL(winURL)
-
-  mainWindow.on('closed', () => {
-    mainWindow = null
-  })
+//禁止程序多开，此处需要单例锁的同学打开注释即可
+const gotTheLock = app.requestSingleInstanceLock()
+if(!gotTheLock){
+  app.quit()
 }
-
-app.on('ready', createWindow)
+app.isReady() ? onAppReady() : app.on('ready', onAppReady)
+// 解决9.x跨域异常问题
+app.commandLine.appendSwitch('disable-features', 'OutOfBlinkCors')
 
 app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit()
+  // 所有平台均为所有窗口关闭就退出软件
+  app.quit()
+})
+app.on('browser-window-created', () => {
+  console.log('window-created')
+})
+
+if (process.defaultApp) {
+  if (process.argv.length >= 2) {
+    app.removeAsDefaultProtocolClient('electron-vue-template')
+    console.log('有于框架特殊性开发环境下无法使用')
   }
-})
-
-app.on('activate', () => {
-  if (mainWindow === null) {
-    createWindow()
-  }
-})
-
-/**
- * Auto Updater
- *
- * Uncomment the following code below and install `electron-updater` to
- * support auto updating. Code Signing with a valid certificate is required.
- * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-electron-builder.html#auto-updating
- */
-
-/*
-import { autoUpdater } from 'electron-updater'
-
-autoUpdater.on('update-downloaded', () => {
-  autoUpdater.quitAndInstall()
-})
-
-app.on('ready', () => {
-  if (process.env.NODE_ENV === 'production') autoUpdater.checkForUpdates()
-})
- */
+} else {
+  app.setAsDefaultProtocolClient('electron-vue-template')
+}

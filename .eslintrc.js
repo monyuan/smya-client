@@ -1,33 +1,27 @@
 module.exports = {
-  "root": true,
-  "env": {
-    "node": true,
-    "browser": true,
-    "es6": true
+  root: true,
+  parser: 'babel-eslint',
+  parserOptions: {
+    sourceType: 'module'
   },
-  "parser": "vue-eslint-parser",
-  "parserOptions": {
-    "sourceType": "module",
-    "parser": "babel-eslint",
-    "allowImportExportEverywhere": true
+  env: {
+    browser: true,
+    node: true
   },
-  "extends": ['plugin:vue/recommended', "eslint:recommended"],
-  "plugins": [
-    "vue"
+  extends: 'standard',
+  globals: {
+    __static: true,
+    __lib: true
+  },
+  plugins: [
+    'html'
   ],
-  "rules": {
-    "vue/max-attributes-per-line": ["error", {
-      "singleline": 100
-    }],
-    "vue/html-self-closing": "off",
-    "vue/singleline-html-element-content-newline": "off",
-    "vue/no-v-html": "off",
-    "vue/multiline-html-element-content-newline": "off",
-    "no-unused-vars": "off",
-    "semi": ["error", "never"],
-    "no-async-promise-executor": "off",
-    "no-useless-escape": "off",
-    "no-prototype-builtins": "off",
-    "no-undef": "off"
+  'rules': {
+    // allow paren-less arrow functions
+    'arrow-parens': 0,
+    // allow async-await
+    'generator-star-spacing': 0,
+    // allow debugger during development
+    'no-debugger': process.env.NODE_ENV === 'production' ? 2 : 0
   }
 }

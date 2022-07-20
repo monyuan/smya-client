@@ -2,12 +2,12 @@
   <div class="sidebar-logo-container" :class="{'collapse':collapse}">
     <transition name="sidebarLogoFade">
       <router-link v-if="collapse" key="collapse" class="sidebar-logo-link" to="/">
-        <img v-if="logo" :src="logo" class="sidebar-logo">
-        <h1 v-else class="sidebar-title">{{ title }} </h1>
+        <svg-icon icon-class="logo" class-name="sidebar-logo"></svg-icon>
+        <div class="sidebar-title">{{ title }}</div>
       </router-link>
       <router-link v-else key="expand" class="sidebar-logo-link" to="/">
-        <img v-if="logo" :src="logo" class="sidebar-logo">
-        <h1 class="sidebar-title">{{ title }} </h1>
+        <svg-icon icon-class="logo" class-name="sidebar-logo"></svg-icon>
+        <div class="sidebar-title">{{ title }}</div>
       </router-link>
     </transition>
   </div>
@@ -15,7 +15,7 @@
 
 <script>
 export default {
-  name: 'SidebarLogo',
+  name: "SidebarLogo",
   props: {
     collapse: {
       type: Boolean,
@@ -24,16 +24,15 @@ export default {
   },
   data() {
     return {
-      title: 'Vue Element Admin',
-      logo: 'https://wpimg.wallstcn.com/69a1c46c-eb1c-4b46-8bd4-e9e686ef5251.png'
-    }
+      title: "logo名称",
+    };
   }
-}
+};
 </script>
 
-<style lang="scss" scoped>
+<style rel="stylesheet/scss" lang="scss" scoped>
 .sidebarLogoFade-enter-active {
-  transition: opacity 1.5s;
+  transition: opacity .28s;
 }
 
 .sidebarLogoFade-enter,
@@ -42,29 +41,30 @@ export default {
 }
 
 .sidebar-logo-container {
+  box-shadow: 2px 0 6px rgba(0,21,41,.15);
   position: relative;
   width: 100%;
-  height: 50px;
-  line-height: 50px;
-  background: #2b2f3a;
+  height: 61px;
+  line-height: 61px;
   text-align: center;
   overflow: hidden;
+  background-color: #ffffff;
 
-  & .sidebar-logo-link {
+  & > .sidebar-logo-link {
     height: 100%;
     width: 100%;
 
-    & .sidebar-logo {
+    & > .sidebar-logo {
       width: 32px;
       height: 32px;
       vertical-align: middle;
       margin-right: 12px;
     }
 
-    & .sidebar-title {
+    & > .sidebar-title {
       display: inline-block;
       margin: 0;
-      color: #fff;
+      color: #333;
       font-weight: 600;
       line-height: 50px;
       font-size: 14px;
@@ -72,11 +72,11 @@ export default {
       vertical-align: middle;
     }
   }
-
-  &.collapse {
-    .sidebar-logo {
-      margin-right: 0px;
-    }
+}
+.collapse {
+  .sidebar-logo {
+    margin-right: 0px !important;
+    margin-left: 0px !important;
   }
 }
 </style>

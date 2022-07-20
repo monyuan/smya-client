@@ -1,42 +1,85 @@
 <template>
-  <div v-if="!item.hidden">
-    <template v-if="hasOneShowingChild(item.children,item) && (!onlyOneChild.children||onlyOneChild.noShowingChildren)&&!item.alwaysShow">
-      <app-link v-if="onlyOneChild.meta" :to="resolvePath(onlyOneChild.path)">
-        <el-menu-item :index="resolvePath(onlyOneChild.path)" :class="{'submenu-title-noDropdown':!isNest}">
-          <item :icon="onlyOneChild.meta.icon||(item.meta&&item.meta.icon)" :title="onlyOneChild.meta.title" />
+  <div
+    v-if="!item.hidden&&item.children"
+    class="menu-wrapper"
+    :class="collapse?``:`active-menu-wrapper`"
+  >
+    <div v-if="item.onlyShowfirst">
+      <router-link
+        v-if="OneShowingChild(item.children[0]) && !onlyOneChild.children&&!item.alwaysShow"
+        :to="resolvePath(onlyOneChild.path)"
+      >
+        <el-menu-item
+          :index="resolvePath(onlyOneChild.path)"
+          :class="{'submenu-title-noDropdown':!isNest}"
+        >
+          <svg-icon
+            v-if="onlyOneChild.meta&&onlyOneChild.meta.icon"
+            :icon-class="onlyOneChild.meta.icon"
+          ></svg-icon>
+          <span
+            v-if="onlyOneChild.meta&&onlyOneChild.meta.title"
+            slot="title"
+          >{{onlyOneChild.meta.title}}</span>
         </el-menu-item>
-      </app-link>
-    </template>
+      </router-link>
+    </div>
 
-    <el-submenu v-else ref="subMenu" :index="resolvePath(item.path)" popper-append-to-body>
-      <template slot="title">
-        <item v-if="item.meta" :icon="item.meta && item.meta.icon" :title="item.meta.title" />
-      </template>
-      <sidebar-item
-        v-for="child in item.children"
-        :key="child.path"
-        :is-nest="true"
-        :item="child"
-        :base-path="resolvePath(child.path)"
-        class="nest-menu"
-      />
-    </el-submenu>
+    <div v-else>
+      <router-link
+        v-if="hasOneShowingChild(item.children) && !onlyOneChild.children&&!item.alwaysShow"
+        :to="resolvePath(onlyOneChild.path)"
+      >
+        <el-menu-item
+          :index="resolvePath(onlyOneChild.path)"
+          :class="{'submenu-title-noDropdown':!isNest}"
+        >
+          <svg-icon
+            v-if="onlyOneChild.meta&&onlyOneChild.meta.icon"
+            :icon-class="onlyOneChild.meta.icon"
+          ></svg-icon>
+          <span
+            v-if="onlyOneChild.meta&&onlyOneChild.meta.title"
+            slot="title"
+          >{{onlyOneChild.meta.title}}</span>
+        </el-menu-item>
+      </router-link>
+
+      <el-submenu v-else :index="item.name||item.path">
+        <template slot="title">
+          <svg-icon v-if="item.meta&&item.meta.icon" :icon-class="item.meta.icon"></svg-icon>
+          <span v-if="item.meta&&item.meta.title" slot="title">{{item.meta.title}}</span>
+        </template>
+
+        <template v-for="child in item.children" v-if="!child.hidden">
+          <sidebar-item
+            :is-nest="true"
+            class="nest-menu"
+            v-if="child.children&&child.children.length>0"
+            :item="child"
+            :key="child.path"
+            :base-path="resolvePath(child.path)"
+          ></sidebar-item>
+
+          <router-link v-else :to="resolvePath(child.path)" :key="child.name">
+            <el-menu-item :index="resolvePath(child.path)">
+              <svg-icon v-if="child.meta&&child.meta.icon" :icon-class="child.meta.icon"></svg-icon>
+              <span v-if="child.meta&&child.meta.title" slot="title">{{child.meta.title}}</span>
+            </el-menu-item>
+          </router-link>
+        </template>
+      </el-submenu>
+    </div>
   </div>
 </template>
 
 <script>
-import path from 'path'
-import { isExternal } from '@/utils/validate'
-import Item from './Item'
-import AppLink from './Link'
-import FixiOSBug from './FixiOSBug'
+// import path from "path";
 
 export default {
-  name: 'SidebarItem',
-  components: { Item, AppLink },
-  mixins: [FixiOSBug],
+  name: "SidebarItem",
   props: {
-    // route object
+    // route配置json
     item: {
       type: Object,
       required: true
@@ -47,55 +90,52 @@ export default {
     },
     basePath: {
       type: String,
-      default: ''
+      default: ""
+    },
+    collapse: {
+      type: Boolean,
+      required: true
     }
   },
   data() {
-    // To fix https://github.com/PanJiaChen/vue-admin-template/issues/237
-    // TODO: refactor with render function
-    this.onlyOneChild = null
-    return {}
+    return {
+      onlyOneChild: null
+    };
   },
   methods: {
-    hasOneShowingChild(children = [], parent) {
+    hasOneShowingChild(children) {
       const showingChildren = children.filter(item => {
         if (item.hidden) {
-          return false
+          return false;
         } else {
-          // Temp set(will be used if only has one showing child)
-          this.onlyOneChild = item
-          return true
+          this.onlyOneChild = item;
+          return true;
         }
-      })
-
-      // When there is only one child router, the child router is displayed by default
+      });
       if (showingChildren.length === 1) {
-        return true
+        return true;
       }
-
-      // Show parent if there are no child router to display
-      if (showingChildren.length === 0) {
-        this.onlyOneChild = { ... parent, path: '', noShowingChildren: true }
-        return true
-      }
-
-      return false
+      return false;
     },
-    resolvePath(routePath) {
-      if (isExternal(routePath)) {
-        return routePath
-      }
-      if (isExternal(this.basePath)) {
-        return this.basePath
-      }
-      let ret
-      if (process.platform == 'win32') {    // 如果是Windows系统，则直接拼接
-        ret = (this.basePath + '/' + routePath).replace('//', '/')
-      } else {
-        ret = path.resolve(this.basePath, routePath)
-      }
-      return ret
+    resolvePath(...paths) {
+      return this.basePath + "/" + paths[0];
+    },
+    OneShowingChild(children) {
+      this.onlyOneChild = children;
+      return true;
     }
   }
-}
+};
 </script>
+<style lang="scss" scoped>
+.menu-wrapper {
+  ::v-deep .el-menu-item,
+  .el-submenu__title {
+    height: 46px;
+    line-height: 46px;
+  }
+  ::v-deep .el-menu-item {
+    padding: 0 20px 0 12px;
+  }
+}
+</style>

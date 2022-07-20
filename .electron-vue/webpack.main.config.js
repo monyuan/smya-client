@@ -5,10 +5,17 @@ process.env.BABEL_ENV = 'main'
 const path = require('path')
 const { dependencies } = require('../package.json')
 const webpack = require('webpack')
+const TerserPlugin = require('terser-webpack-plugin')
+const config = require('../config')
 
-const MinifyPlugin = require("babel-minify-webpack-plugin")
+function resolve(dir) {
+  return path.join(__dirname, '..', dir)
+}
 
 let mainConfig = {
+  infrastructureLogging: {
+    level: 'warn'
+  },
   entry: {
     main: path.join(__dirname, '../src/main/index.js')
   },
@@ -18,20 +25,8 @@ let mainConfig = {
   module: {
     rules: [
       {
-        test: /\.(js)$/,
-        enforce: 'pre',
-        exclude: /node_modules/,
-        use: {
-          loader: 'eslint-loader',
-          options: {
-            formatter: require('eslint-friendly-formatter')
-          }
-        }
-      },
-      {
         test: /\.js$/,
-        use: 'babel-loader',
-        exclude: /node_modules/
+        loader: 'esbuild-loader'
       },
       {
         test: /\.node$/,
@@ -49,12 +44,17 @@ let mainConfig = {
     path: path.join(__dirname, '../dist/electron')
   },
   plugins: [
-    new webpack.NoEmitOnErrorsPlugin()
+    new webpack.DefinePlugin({
+      'process.env.TERGET_ENV': JSON.stringify(config[process.env.TERGET_ENV]),
+    })
   ],
   resolve: {
+    alias: {
+      '@config': resolve('config'),
+    },
     extensions: ['.js', '.json', '.node']
   },
-  target: 'electron-main'
+  target: 'electron-main',
 }
 
 /**
@@ -63,7 +63,8 @@ let mainConfig = {
 if (process.env.NODE_ENV !== 'production') {
   mainConfig.plugins.push(
     new webpack.DefinePlugin({
-      '__static': `"${path.join(__dirname, '../static').replace(/\\/g, '\\\\')}"`
+      '__static': `"${path.join(__dirname, '../static').replace(/\\/g, '\\\\')}"`,
+      'process.env.libPath': `"${path.join(__dirname, `../${config.DllFolder}`).replace(/\\/g, '\\\\')}"`
     })
   )
 }
@@ -71,9 +72,23 @@ if (process.env.NODE_ENV !== 'production') {
 /**
  * Adjust mainConfig for production settings
  */
-if (process.env.NODE_ENV === 'production') {
+if (process.env.NODE_ENV === 'production' && config.build.cleanConsole) {
+  mainConfig.optimization = {
+    minimize: true,
+    minimizer: [
+      new TerserPlugin({
+        terserOptions: {
+          compress: {
+            drop_console: true,
+            drop_debugger: true,
+            pure_funcs: ["console.log", "console.warn"]
+          }
+        }
+
+      })
+    ]
+  }
   mainConfig.plugins.push(
-    new MinifyPlugin(),
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': '"production"'
     })

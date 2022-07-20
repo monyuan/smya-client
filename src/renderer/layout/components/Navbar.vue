@@ -1,167 +1,169 @@
 <template>
-  <div class="navbar">
-    <hamburger id="hamburger-container" :is-active="sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
+  <el-menu :class="'navbar-header-fixed' + (isMac ? ' dragTitle' : '')" mode="horizontal">
+    <div class="top-right">
+      <div class="hb-bd">
+        <hamburger
+          class="hamburger-container"
+          :toggleClick="toggleSideBar"
+          :isActive="sidebar.opened"
+        ></hamburger>
+        <breadcrumb></breadcrumb>
+      </div>
 
-    <breadcrumb id="breadcrumb-container" class="breadcrumb-container" />
-
-    <div class="right-menu">
-      <template v-if="device!=='mobile'">
-        <search id="header-search" class="right-menu-item" />
-
-        <error-log class="errLog-container right-menu-item hover-effect" />
-
-        <screenfull id="screenfull" class="right-menu-item hover-effect" />
-
-        <el-tooltip content="Global Size" effect="dark" placement="bottom">
-          <size-select id="size-select" class="right-menu-item hover-effect" />
-        </el-tooltip>
-
-      </template>
-
-      <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click">
-        <div class="avatar-wrapper">
-          <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar">
-          <i class="el-icon-caret-bottom" />
+      <div class="top-select">
+        <div class="go-index">{{time}}</div>
+        <div class="select-right">
+          <el-dropdown trigger="click">
+            <div>
+              <el-image :src="userImage" class="avatar">
+                <div slot="error" class="image-slot">
+                  <i class="el-icon-picture-outline"></i>
+                </div>
+              </el-image>
+              <div class="el-dropdown-link">
+               尊敬的： {{name}}
+                <i class="el-icon-arrow-down el-icon--right"></i>
+              </div>
+            </div>
+            <el-dropdown-menu slot="dropdown">
+              <router-link to="/">
+                <el-dropdown-item>返回首页</el-dropdown-item>
+              </router-link>
+              <el-dropdown-item @click.native="logout">
+                <span>切换账号</span>
+              </el-dropdown-item>
+              <el-dropdown-item @click.native="logout">
+                <span>退出登录</span>
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
         </div>
-        <el-dropdown-menu slot="dropdown">
-          <router-link to="/profile/index">
-            <el-dropdown-item>Profile</el-dropdown-item>
-          </router-link>
-          <router-link to="/">
-            <el-dropdown-item>Dashboard</el-dropdown-item>
-          </router-link>
-          <a target="_blank" href="https://github.com/PanJiaChen/vue-element-admin/">
-            <el-dropdown-item>Github</el-dropdown-item>
-          </a>
-          <a target="_blank" href="https://panjiachen.github.io/vue-element-admin-site/#/">
-            <el-dropdown-item>Docs</el-dropdown-item>
-          </a>
-          <el-dropdown-item divided @click.native="logout">
-            <span style="display:block;">Log Out</span>
-          </el-dropdown-item>
-        </el-dropdown-menu>
-      </el-dropdown>
+      </div>
     </div>
-  </div>
+  </el-menu>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-import Breadcrumb from '@/components/Breadcrumb'
-import Hamburger from '@/components/Hamburger'
-import ErrorLog from '@/components/ErrorLog'
-import Screenfull from '@/components/Screenfull'
-import SizeSelect from '@/components/SizeSelect'
-import Search from '@/components/HeaderSearch'
-
+import { format } from "date-fns";
+import { mapGetters } from "vuex";
+import Breadcrumb from "@/components/Breadcrumb";
+import Hamburger from "@/components/Hamburger";
 export default {
   components: {
     Breadcrumb,
-    Hamburger,
-    ErrorLog,
-    Screenfull,
-    SizeSelect,
-    Search
+    Hamburger
   },
-  computed: {
-    ...mapGetters([
-      'sidebar',
-      'avatar',
-      'device'
-    ])
+  data: () => ({
+    time: "",
+    userImage: require("@/assets/user.png"),
+    isMac: process.platform === "darwin"
+  }),
+  mounted() {
+    this.set_time();
+    this.timer = setInterval(() => {
+      this.set_time();
+    }, 60000);
+    console.log(this.userImage)
   },
   methods: {
     toggleSideBar() {
-      this.$store.dispatch('app/toggleSideBar')
+      this.$store.dispatch("ToggleSideBar");
     },
-    async logout() {
-      await this.$store.dispatch('user/logout')
-      this.$router.push(`/login?redirect=${this.$route.fullPath}`)
+    logout() {
+      this.$store.dispatch("LogOut").then(() => {
+        this.$message({
+          message: "退出成功",
+          type: "success"
+        });
+        this.$router.push('/login')
+      });
+    },
+    set_time() {
+      this.time = format(new Date(), "yyyy/MM/dd HH:mm");
     }
+  },
+  computed: {
+    ...mapGetters(["name", "role", "sidebar"])
+  },
+  beforeDestroy() {
+    console.log("销毁计时器------------");
+    clearInterval(this.timer);
+    this.timer = null;
   }
-}
+};
 </script>
 
-<style lang="scss" scoped>
-.navbar {
-  height: 50px;
-  overflow: hidden;
-  position: relative;
-  background: #fff;
-  box-shadow: 0 1px 4px rgba(0,21,41,.08);
-
+<style rel="stylesheet/scss" lang="scss" scoped>
+.navbar-header-fixed {
+  transition: width 0.28s;
+  width: calc(100% - 256px);
+  display: flex;
+  align-items: center;
+  position: fixed;
+  right: 0;
+  z-index: 1002;
+  height: 62px;
   .hamburger-container {
-    line-height: 46px;
-    height: 100%;
+    line-height: 58px;
+    height: 50px;
     float: left;
-    cursor: pointer;
-    transition: background .3s;
-    -webkit-tap-highlight-color:transparent;
-
-    &:hover {
-      background: rgba(0, 0, 0, .025)
-    }
+    padding: 0 10px;
   }
-
-  .breadcrumb-container {
-    float: left;
+  .logo {
+    width: 199px;
+    height: 62px;
   }
-
-  .errLog-container {
-    display: inline-block;
-    vertical-align: top;
-  }
-
-  .right-menu {
-    float: right;
+  .top-right {
+    display: flex;
+    width: 100%;
     height: 100%;
-    line-height: 50px;
-
-    &:focus {
-      outline: none;
+    background-color: #ffffff;
+    justify-content: space-between;
+    padding: 0 19px;
+    .hb-bd {
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
-
-    .right-menu-item {
-      display: inline-block;
-      padding: 0 8px;
-      height: 100%;
-      font-size: 18px;
-      color: #5a5e66;
-      vertical-align: text-bottom;
-
-      &.hover-effect {
-        cursor: pointer;
-        transition: background .3s;
-
-        &:hover {
-          background: rgba(0, 0, 0, .025)
-        }
+    .avatar {
+      width: 30px;
+      height: 30px;
+      margin-right: 10px;
+      ::v-deep img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
       }
     }
-
-    .avatar-container {
-      margin-right: 30px;
-
-      .avatar-wrapper {
-        margin-top: 5px;
-        position: relative;
-
-        .user-avatar {
-          cursor: pointer;
-          width: 40px;
-          height: 40px;
-          border-radius: 10px;
+    .top-select {
+      display: flex;
+      align-items: center;
+      .go-index {
+        color: #333333;
+        font-weight: 400;
+        margin-right: 20px;
+        padding-right: 20px;
+        border-right: 1px solid #cccccc;
+      }
+      .select-right ::v-deep .el-dropdown > span {
+        font-size: 6px;
+      }
+      .select-right {
+        .el-dropdown-link {
+          color: #333333;
+          font-weight: 400;
         }
-
-        .el-icon-caret-bottom {
-          cursor: pointer;
-          position: absolute;
-          right: -20px;
-          top: 25px;
-          font-size: 12px;
+        ::v-deep .el-dropdown-selfdefine {
+          display: flex;
+          align-items: center;
         }
       }
     }
   }
 }
+
+.dragTitle {
+  -webkit-app-region: drag;
+}
 </style>
+
