@@ -4,6 +4,11 @@
 <head>
   <meta charset="utf-8">
   <title>神秘鸭 - ORZ实验室出品 ORZLAB.COM</title>
+  <script>
+  if (typeof module === "object") {
+      window.jQuery = window.$ = module.exports;
+  }
+  </script>
   <% if (htmlWebpackPlugin.options.nodeModules) { %>
     <!-- Add `node_modules/` to global paths so `require` works properly in development -->
     <script>
