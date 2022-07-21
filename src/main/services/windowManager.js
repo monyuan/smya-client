@@ -14,10 +14,10 @@ function createMainWindow() {
    * Initial window options
    */
   mainWindow = new BrowserWindow({
-    height: 500,
+    height: 600,
     useContentSize: true,
-    width: 700,
-    minWidth: 700,
+    width: 500,
+    minWidth: 800,
     show: false,
     resizable: false,
     frame: config.IsUseSysTitle,
@@ -69,8 +69,8 @@ function createMainWindow() {
 
 function loadingWindow() {
   loadWindow = new BrowserWindow({
-    width: 585,
-    height: 100,
+    width: 500,
+    height: 120,
     frame: false,
     backgroundColor: '#222',
     skipTaskbar: true,

@@ -2,13 +2,14 @@
 const app = {
   state: {
     sidebar: {
-      opened: !+localStorage.getItem('sidebarStatus'),
+      opened: false,
       withoutAnimation: false
     },
     device: 'desktop'
   },
   mutations: {
     TOGGLE_SIDEBAR: state => {
+		console.log("333")
       if (state.sidebar.opened) {
         localStorage.setItem('sidebarStatus', 1)
       } else {

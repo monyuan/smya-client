@@ -16,7 +16,7 @@ export const constantRouterMap = [{
   children: [{
     path: 'dashboard',
     name: '总览',
-    component: () => import('@/components/LandingPage')
+    component: () => import('@/views/device')
   }]
 }, {
   path: '/login',
@@ -31,7 +31,8 @@ export const asyncRoutes = asyncRouterMap
 
 const createRouter = () => new Router({
   scrollBehavior: () => ({ y: 0 }),
-  routes: constantRouterMap
+  routes: constantRouterMap,
+  mode: 'hash'
 })
 
 export function resetRouter() {

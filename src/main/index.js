@@ -4,6 +4,10 @@ import { app } from 'electron'
 import initWindow from './services/windowManager'
 import DisableButton from './config/DisableButton'
 import electronDevtoolsInstaller, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
+import Store from 'electron-store'
+Store.initRenderer();
+// console.log(" 111+ " + app.getPath('userData'))
+process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true';
 
 function onAppReady () {
   initWindow()

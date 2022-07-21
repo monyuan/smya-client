@@ -2,12 +2,12 @@
   <div class="sidebar-logo-container" :class="{'collapse':collapse}">
     <transition name="sidebarLogoFade">
       <router-link v-if="collapse" key="collapse" class="sidebar-logo-link" to="/">
-        <svg-icon icon-class="logo" class-name="sidebar-logo"></svg-icon>
-        <div class="sidebar-title">{{ title }}</div>
+        <img class="left-logo" src="https://m.360buyimg.com/babel/jfs/t1/184715/5/27015/6533/62d3d3f2Ed161a178/47317abce57cb18b.png"/>
+        <!-- <div class="sidebar-title">{{ title }}</div> -->
       </router-link>
       <router-link v-else key="expand" class="sidebar-logo-link" to="/">
-        <svg-icon icon-class="logo" class-name="sidebar-logo"></svg-icon>
-        <div class="sidebar-title">{{ title }}</div>
+        <img  class="left-logo" src="https://m.360buyimg.com/babel/jfs/t1/184715/5/27015/6533/62d3d3f2Ed161a178/47317abce57cb18b.png"/>
+        <!-- <div class="sidebar-title">{{ title }}</div> -->
       </router-link>
     </transition>
   </div>
@@ -24,7 +24,7 @@ export default {
   },
   data() {
     return {
-      title: "logo名称",
+      title: "神秘鸭",
     };
   }
 };
@@ -35,20 +35,25 @@ export default {
   transition: opacity .28s;
 }
 
+.left-logo{
+	width: 70px;
+	margin-top: 14px;
+}
+
 .sidebarLogoFade-enter,
 .sidebarLogoFade-leave-to {
   opacity: 0;
 }
 
 .sidebar-logo-container {
-  box-shadow: 2px 0 6px rgba(0,21,41,.15);
   position: relative;
   width: 100%;
-  height: 61px;
-  line-height: 61px;
+  height: 100px;
+  line-height: 100px;
   text-align: center;
   overflow: hidden;
   background-color: #ffffff;
+  box-shadow: none!important;
 
   & > .sidebar-logo-link {
     height: 100%;

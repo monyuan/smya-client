@@ -1,9 +1,9 @@
 <template>
   <div class="app-wrapper" :class="IsUseSysTitle?'UseSysTitle':'NoUseSysTitle'">
-    <div :class="classObj">
+    <div class="openSidebar">
       <navbar></navbar>
       <div class="container-set">
-        <sidebar class="sidebar-container" :class="IsUseSysTitle?'UseSysTitle':'NoUseSysTitle'"></sidebar>
+      <!--  <sidebar class="sidebar-container" :class="IsUseSysTitle?'UseSysTitle':'NoUseSysTitle'"></sidebar> -->
         <div class="main-container">
           <app-main></app-main>
         </div>

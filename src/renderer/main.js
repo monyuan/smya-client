@@ -1,8 +1,8 @@
 import Vue from 'vue'
-
 import App from './App'
 import router from './router'
 import store from './store'
+import Store from 'electron-store'
 // 引用element
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
@@ -18,6 +18,10 @@ import VueI18n from 'vue-i18n'
 import loadLanguage from "./i18n"
 const languages = loadLanguage()
 
+//本地数据存储
+const localData = new Store()
+Vue.prototype.$local = localData
+Vue.use(localData)
 if (!process.env.IS_WEB) {
   if (!require('../../config').IsUseSysTitle) {
     require('@/styles/custom-title.scss')

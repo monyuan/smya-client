@@ -13,7 +13,7 @@ export default {
   name: 'scrollBar',
   data() {
     return {
-      top: 0
+      top: 20
     }
   },
   methods: {
@@ -33,7 +33,7 @@ export default {
             this.top = Math.max(this.top + eventDelta, $containerHeight - $wrapperHeight - delta)
           }
         } else {
-          this.top = 0
+          this.top = 20
         }
       }
     }

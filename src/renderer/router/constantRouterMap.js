@@ -23,43 +23,67 @@ import Layout from '@/layout'
     icon: 'svg-name'             当你在svg文件夹内加入了你的图标,那么在这里填写图标名他就会显示在侧栏
   }
  **/
-export default [
-  {
-    path: '/form',
-    component: Layout,
-    meta: { title: '表单', icon: 'form' },
-    children: [
-      {
-        path: 'index',
-        name: 'Form',
-        component: () => import('@/views/form/index'),
-        meta: { title: '表单', icon: 'form' }
-      }
-    ]
-  },
-  {
-    path: '/table',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        name: '表格',
-        component: () => import('@/views/table/index'),
-        meta: { title: '表格', icon: 'table' }
-      }
-    ]
-  },
-  {
-    path: '/permission',
-    component: Layout,
-    meta: { roles: ['admin'] },
-    children: [
-      {
-        path: 'index',
-        name: '权限',
-        component: () => import('@/views/permission/index'),
-        meta: { title: '权限', icon: 'table' }
-      }
-    ]
-  },
+export default [{
+		path: '/device',
+		component: Layout,
+		meta: {
+			title: '设备管理',
+			icon: 'form'
+		},
+		children: [{
+			path: 'index',
+			name: 'device',
+			component: () => import('@/views/device/index'),
+			meta: {
+				title: '设备管理',
+				icon: 'form'
+			}
+		}]
+	},
+	{
+		path: '/form',
+		component: Layout,
+		meta: {
+			title: '表单',
+			icon: 'form'
+		},
+		children: [{
+			path: 'index',
+			name: 'Form',
+			component: () => import('@/views/form/index'),
+			meta: {
+				title: '表单',
+				icon: 'form'
+			}
+		}]
+	},
+	{
+		path: '/table',
+		component: Layout,
+		children: [{
+			path: 'index',
+			name: '表格',
+			component: () => import('@/views/table/index'),
+			meta: {
+				title: '表格',
+				icon: 'table'
+			}
+		}]
+	},
+	{
+		path: '/permission',
+		component: Layout,
+		meta: {
+			roles: ['admin']
+		},
+		children: [{
+			path: 'index',
+			name: '权限',
+			component: () => import('@/views/permission/index'),
+			meta: {
+				title: '权限',
+				icon: 'table'
+			}
+		}]
+	},
 ]
