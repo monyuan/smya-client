@@ -14,10 +14,8 @@ function createMainWindow() {
    * Initial window options
    */
   mainWindow = new BrowserWindow({
-    height: 600,
-    useContentSize: true,
-    width: 500,
-    minWidth: 800,
+    height: 450,
+    width: 350,
     show: false,
     resizable: false,
     frame: config.IsUseSysTitle,

@@ -1,17 +1,17 @@
 const user = {
   state: {
-    token: JSON.parse(localStorage.getItem('token')),
-    name: JSON.parse(localStorage.getItem('name')),
-    roles: JSON.parse(localStorage.getItem('roles'))
+    token: localStorage.getItem('token'),
+    name: localStorage.getItem('name'),
+    roles: localStorage.getItem('roles')
   },
 
   mutations: {
     SET_TOKEN: (state, token) => {
-      localStorage.setItem("token", JSON.stringify(token));
+      localStorage.setItem("token", token);
       state.token = token;
     },
     SET_NAME: (state, name) => {
-      localStorage.setItem("name", JSON.stringify(name));
+      localStorage.setItem("name", name);
       state.name = name;
     },
     SET_ROLES: (state, roles) => {

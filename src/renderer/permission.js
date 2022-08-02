@@ -1,33 +1,18 @@
 import router from './router'
-import store from './store'
 import Performance from '@/tools/performance'
 
 var end = null
 const whiteList = ['/login'] // 不重定向白名单
 router.beforeEach(async (to, from, next) => {
   end = Performance.startExecute(`${from.path} => ${to.path} 路由耗时`) /// 路由性能监控
-
-  if (store.getters.token) {
+  let token = localStorage.getItem("token")
+  console.log(token)
+  if (token && token.length > 2) {
     if (to.path === '/login') {
       next({ path: '/' })
     } else {
-      const hasRoles = store.getters.roles && store.getters.roles.length > 0;
-
-      if (hasRoles && store.getters.permission_routes.length > 0) {
-        next()
-      } else {
-        try {
-          const { roles } = await store.dispatch('GetUserInfo')
-          const accessRoutes = await store.dispatch('GenerateRoutes', roles)
-          router.addRoutes(accessRoutes)
-          next({ ...to, replace: true })
-        } catch (error) {
-          await store.dispatch('LogOut')
-          console.log(error)
-          next('/login')
-        }
-      }
-
+      console.log("ok2")
+      next()
     }
   } else {
     if (whiteList.indexOf(to.path) !== -1) {

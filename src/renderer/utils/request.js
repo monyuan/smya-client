@@ -14,8 +14,8 @@ serves.interceptors.request.use(config => {
 // 设置请求接受拦截器
 serves.interceptors.response.use(res => {
   // 设置接受数据之后，做什么处理
-  if (res.data.code === 50000) {
-    Message.error(res.data.data)
+  if (res.data.code !== 10000) {
+    Message.error(res.data.msg)
   }
   return res
 }, err => {

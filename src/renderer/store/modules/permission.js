@@ -36,42 +36,42 @@ function filterAsyncRouter(routes, roles) {
 }
 
 const permission = {
-    state: {
-        routers: [],
-        addRouters: []
-    },
-    mutations: {
-        SET_ROUTERS: (state, routers) => {
-            state.addRouters = routers
-            state.routers = constantRouterMap.concat(routers)
-            console.log(state.routers)
-        },
-        RESET_ROUTERS: (state, routers) => {
-            state.addRouters = routers
-            state.routers = routers
-        }
-    },
-    actions: {
-        GenerateRoutes({ commit }, data) {
-            return new Promise(resolve => {
-                const roles = data
-                let accessedRouters = []
-                // 在这里当是管理员权限时,就给予所有的路由表
-                if (roles === 'admin') {
-                    accessedRouters = asyncRoutes || []
-                } else {
-                    // 根据需通过得到的权限于路由表中对比得到该用户应有的边栏
-                    accessedRouters = filterAsyncRouter(asyncRoutes, roles)
-                    // 根据产品类型再次处理路由表
-                }
-                commit('SET_ROUTERS', accessedRouters)
-                resolve(accessedRouters)
-            })
-        },
-        ResetRoutes({ commit }, data) {
-            commit('RESET_ROUTERS', [])
-        }
-    }
+    // state: {
+    //     routers: [],
+    //     addRouters: []
+    // },
+    // mutations: {
+    //     SET_ROUTERS: (state, routers) => {
+    //         state.addRouters = routers
+    //         state.routers = constantRouterMap.concat(routers)
+    //         console.log(state.routers)
+    //     },
+    //     RESET_ROUTERS: (state, routers) => {
+    //         state.addRouters = routers
+    //         state.routers = routers
+    //     }
+    // },
+    // actions: {
+    //     GenerateRoutes({ commit }, data) {
+    //         return new Promise(resolve => {
+    //             const roles = data
+    //             let accessedRouters = []
+    //             // 在这里当是管理员权限时,就给予所有的路由表
+    //             if (roles === 'admin') {
+    //                 accessedRouters = asyncRoutes || []
+    //             } else {
+    //                 // 根据需通过得到的权限于路由表中对比得到该用户应有的边栏
+    //                 accessedRouters = filterAsyncRouter(asyncRoutes, roles)
+    //                 // 根据产品类型再次处理路由表
+    //             }
+    //             commit('SET_ROUTERS', accessedRouters)
+    //             resolve(accessedRouters)
+    //         })
+    //     },
+    //     ResetRoutes({ commit }, data) {
+    //         commit('RESET_ROUTERS', [])
+    //     }
+    // }
 }
 
 export default permission

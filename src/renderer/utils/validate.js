@@ -3,8 +3,7 @@
  */
 
 export function isvalidUsername (str) {
-  const validMap = ['admin', 'editor']
-  return validMap.indexOf(str.trim()) >= 0
+  return str.length == 8
 }
 
 /* 合法uri */

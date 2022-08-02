@@ -1,27 +1,19 @@
 <template>
-  <div class="app-wrapper" :class="IsUseSysTitle?'UseSysTitle':'NoUseSysTitle'">
-    <div class="openSidebar">
-      <navbar></navbar>
-      <div class="container-set">
-      <!--  <sidebar class="sidebar-container" :class="IsUseSysTitle?'UseSysTitle':'NoUseSysTitle'"></sidebar> -->
-        <div class="main-container">
-          <app-main></app-main>
-        </div>
+  <div class="app-wrapper" :class="IsUseSysTitle ? 'UseSysTitle' : 'NoUseSysTitle'">
+      <div class="main-container">
+        <app-main></app-main>
       </div>
     </div>
-  </div>
 </template>
 
 <script>
-import { Sidebar, AppMain, Navbar } from "./components";
+import { AppMain } from "./components";
 import ResizeMixin from "./mixin/ResizeHandler";
 
 export default {
   name: "layout",
   components: {
-    Sidebar,
-    AppMain,
-    Navbar
+    AppMain
   },
   mixins: [ResizeMixin],
   data: () => ({
@@ -46,20 +38,24 @@ export default {
 
 <style rel="stylesheet/scss" lang="scss" scoped>
 @import "@/styles/mixin.scss";
+
 .app-wrapper {
   @include clearfix;
   position: relative;
   height: 100%;
   width: 100%;
+
   .container-set {
     position: relative;
     padding-top: 62px;
   }
 }
-.UseSysTitle{
-  top:0px;
+
+.UseSysTitle {
+  top: 0px;
 }
-.NoUseSysTitle{
-  top:38px
+
+.NoUseSysTitle {
+  top: 38px
 }
 </style>
