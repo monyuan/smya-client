@@ -88,7 +88,9 @@ export default {
 					login(this.loginForm).then(res => {
 						let _this = this
 						if (res.data.data) {
-							localStorage.setItem("token", res.data.data)
+							localStorage.setItem("token", res.data.data.topic)
+							localStorage.setItem("name", res.data.data.deviceName)
+							localStorage.setItem("sn", res.data.data.deviceSn)
 							this.$router.push({ path: '/' }).catch(() => { })
 						}
 						setTimeout(function () { _this.loading = false; }, 800);
@@ -114,7 +116,7 @@ $light_gray: #eee;
 	position: fixed;
 	height: 100%;
 	width: 100%;
-	top: 0;
+	top: 6vh;
 	left: 0;
 	background-image: url("https://p.qlogo.cn/hy_personal/3e28f14aa05168427abc9b4157ec890c17f68e8724d73bd4c097797821d09fda/0.jpg");
 	background-position: center;

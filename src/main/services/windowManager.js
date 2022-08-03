@@ -4,11 +4,11 @@ import menuconfig from '../config/menu'
 import config from '@config'
 import setIpc from './ipcMain'
 import { winURL, loadingURL } from '../config/StaticPath'
-
+import path from "path";
 var loadWindow = null
 var mainWindow = null
 setIpc.Mainfunc(config.IsUseSysTitle)
-
+console.log(path.join(__dirname, "preload.js"))
 function createMainWindow() {
   /**
    * Initial window options
@@ -28,7 +28,8 @@ function createMainWindow() {
       devTools: process.env.NODE_ENV === 'development' || config.build.openDevTools,
       // devTools: true,
       // 在macos中启用橡皮动画
-      scrollBounce: process.platform === 'darwin'
+      scrollBounce: process.platform === 'darwin',
+	  preload: path.join(__dirname, "preload.js")
     }
   })
   // 这里设置只有开发环境才注入显示开发者模式
