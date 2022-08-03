@@ -1,6 +1,5 @@
 <template>
 	<div id="app">
-		<c-header></c-header>
 		<transition name="fade" mode="out-in">
 			<router-view></router-view>
 		</transition>

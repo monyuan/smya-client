@@ -18,36 +18,37 @@ function createMainWindow() {
     width: 350,
     show: false,
     resizable: false,
-    frame: config.IsUseSysTitle,
+    frame: false,
     titleBarStyle: platform().includes('win32') ? 'default' : 'hidden',
     webPreferences: {
       contextIsolation: false,
       nodeIntegration: true,
       webSecurity: false,
+      skipTaskbar: true,
+      transparent: true,
+      backgroundColor: '#00000000',
       // 如果是开发模式可以使用devTools
       devTools: process.env.NODE_ENV === 'development' || config.build.openDevTools,
-      // devTools: true,
       // 在macos中启用橡皮动画
       scrollBounce: process.platform === 'darwin',
-	  preload: path.join(__dirname, "preload.js")
+      preload: path.join(__dirname, "preload.js")
     }
   })
   // 这里设置只有开发环境才注入显示开发者模式
-  if (process.env.NODE_ENV === 'development' || config.build.openDevTools) {
-    menuconfig.push({
-      label: '开发者设置',
-      submenu: [{
-        label: '切换到开发者模式',
-        accelerator: 'CmdOrCtrl+I',
-        role: 'toggledevtools'
-      }]
-    })
-  }
+  // if (process.env.NODE_ENV === 'development' || config.build.openDevTools) {
+  //   menuconfig.push({
+  //     label: '开发者设置',
+  //     submenu: [{
+  //       label: '切换到开发者模式',
+  //       accelerator: 'CmdOrCtrl+I',
+  //       role: 'toggledevtools'
+  //     }]
+  //   })
+  // }
   // 载入菜单
-  const menu = Menu.buildFromTemplate(menuconfig)
-  Menu.setApplicationMenu(menu)
+  Menu.buildFromTemplate(menuconfig)
+  Menu.setApplicationMenu(null)
   mainWindow.loadURL(winURL)
-
 
   mainWindow.webContents.once('dom-ready', () => {
     mainWindow.show()

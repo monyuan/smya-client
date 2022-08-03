@@ -3,7 +3,15 @@
 		<div class="login-from-box">
 			<el-form class="login-form" autocomplete="on" :model="loginForm" :rules="loginRules" ref="loginForm"
 				label-position="left" v-loading="loading">
-				<h3 class="title">欢迎使用神秘鸭</h3>
+				<div class="bar" style="position: absolute;
+									z-index: 99999;
+									width: 100%;
+									top: 0;
+									height: 24px;
+									left: 0;
+									-webkit-app-region: drag
+	"></div>
+				<h3 class="title" style="-webkit-app-region: drag">欢迎使用神秘鸭</h3>
 				<el-form-item prop="username">
 					<span class="svg-container svg-container_login">
 						<svg-icon icon-class="user" />
@@ -116,9 +124,7 @@ $light_gray: #eee;
 	position: fixed;
 	height: 100%;
 	width: 100%;
-	top: 6vh;
 	left: 0;
-	background-image: url("https://p.qlogo.cn/hy_personal/3e28f14aa05168427abc9b4157ec890c17f68e8724d73bd4c097797821d09fda/0.jpg");
 	background-position: center;
 
 	::v-deep .el-input {

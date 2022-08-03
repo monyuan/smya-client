@@ -28,6 +28,7 @@ class MqttUtil {
 		};
 		id = event.sender.id
 		const client = mqtt.connect(host, options);
+
 		client.on("reconnect", () => {
 			BrowserWindow.fromId(id).send('mqtt-service', '连接服务器中，请稍后...')
 		});
@@ -40,9 +41,9 @@ class MqttUtil {
 		});
 
 		client.on("message", (topic, message, packet) => {
-			BrowserWindow.fromId(id).send('mqtt-service', '服务端发来消息：' + message.toString())
-			//
+			console.log("message")
 			this.do(message)
+			BrowserWindow.fromId(id).send('mqtt-service', 'server：' + message.toString())
 		});
 
 	}
@@ -61,6 +62,7 @@ class MqttUtil {
 				this.shell(msgJson.body)
 				break
 			case "message":
+				console.log("do")
 				this.msg(msgJson.title, msgJson.body)
 				break
 		}
@@ -71,7 +73,6 @@ class MqttUtil {
 	}
 
 	msg(title, body) {
-		console.log("ddddd")
 		BrowserWindow.fromId(id).send('mqtt-service', '是否支持消息通知：' + Notification.isSupported())
 		new Notification({
 			title: title,
