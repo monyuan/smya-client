@@ -6,7 +6,12 @@ import {
 import cmdShell from "node-cmd"
 
 var id = 2
+var client = null;
 class MqttUtil {
+
+	offline() {
+		client.end()
+	}
 	onilne(event) {
 		const clientId = "mqttjs_" + Math.random().toString(16).substr(2, 8);
 		const host = "mqtt://emqx.orzlab.com:9004";
@@ -16,6 +21,8 @@ class MqttUtil {
 			protocolId: "MQTT",
 			protocolVersion: 4,
 			clean: true,
+			username: "12345678",
+			password: "123456",
 			reconnectPeriod: 1000,
 			connectTimeout: 30 * 1000,
 			will: {
@@ -27,7 +34,7 @@ class MqttUtil {
 			rejectUnauthorized: false,
 		};
 		id = event.sender.id
-		const client = mqtt.connect(host, options);
+		client = mqtt.connect(host, options);
 
 		client.on("reconnect", () => {
 			BrowserWindow.fromId(id).send('mqtt-service', '连接服务器中，请稍后...')
@@ -40,10 +47,13 @@ class MqttUtil {
 			});
 		});
 
+		client.on('offline', function() {
+			console.log('offline');
+		});
+
 		client.on("message", (topic, message, packet) => {
-			console.log("message")
+			BrowserWindow.fromId(id).send('mqtt-service', message.toString())
 			this.do(message)
-			BrowserWindow.fromId(id).send('mqtt-service', 'server：' + message.toString())
 		});
 
 	}
@@ -73,7 +83,7 @@ class MqttUtil {
 	}
 
 	msg(title, body) {
-		BrowserWindow.fromId(id).send('mqtt-service', '是否支持消息通知：' + Notification.isSupported())
+		// BrowserWindow.fromId(id).send('mqtt-service', '是否支持消息通知：' + Notification.isSupported())
 		new Notification({
 			title: title,
 			body: body

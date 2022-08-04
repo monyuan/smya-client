@@ -18,7 +18,6 @@ function createMainWindow() {
     width: 350,
     show: false,
     resizable: false,
-    frame: false,
     titleBarStyle: platform().includes('win32') ? 'default' : 'hidden',
     webPreferences: {
       contextIsolation: false,

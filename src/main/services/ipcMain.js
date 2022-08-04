@@ -14,6 +14,11 @@ import MqttUtil from './mqttUtil'
 import {
 	updater
 } from './HotUpdater'
+import {
+	ebtMain
+} from 'electron-baidu-tongji'
+const isDevelopment = process.env.NODE_ENV !== 'production'
+ebtMain(ipcMain, isDevelopment)
 
 export default {
 	Mainfunc(IsUseSysTitle) {
@@ -21,6 +26,11 @@ export default {
 		const allUpdater = new Update();
 		ipcMain.handle('mq-online', (event, arg) => {
 			mq.onilne(event)
+			return "ok"
+		})
+
+		ipcMain.handle('mq-offline', (event, arg) => {
+			mq.offline()
 			return "ok"
 		})
 
