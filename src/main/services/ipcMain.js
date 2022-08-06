@@ -20,7 +20,18 @@ export default {
 		const mq = new MqttUtil()
 		const allUpdater = new Update();
 		ipcMain.handle('mq-online', (event, arg) => {
-			mq.onilne(event)
+			let info = JSON.parse(arg)
+			const options = {
+				keepalive: 30,
+				clientId: "smy_" + Math.random().toString(16).substr(2, 8),
+				clean: true,
+				username: info.username,
+				password: info.password,
+				reconnectPeriod: 1000,
+				connectTimeout: 30 * 1000,
+				rejectUnauthorized: false,
+			};
+			mq.onilne(event,options, info.password, info.host)
 			return "ok"
 		})
 

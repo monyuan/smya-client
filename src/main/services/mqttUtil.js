@@ -7,25 +7,7 @@ import cmdShell from "node-cmd"
 
 var id = 2
 class MqttUtil {
-	onilne(event) {
-		const clientId = "mqttjs_" + Math.random().toString(16).substr(2, 8);
-		const host = "mqtt://emqx.orzlab.com:9004";
-		const options = {
-			keepalive: 30,
-			clientId: clientId,
-			protocolId: "MQTT",
-			protocolVersion: 4,
-			clean: true,
-			reconnectPeriod: 1000,
-			connectTimeout: 30 * 1000,
-			will: {
-				topic: "WillMsg",
-				payload: "Connection Closed abnormally..!",
-				qos: 0,
-				retain: false,
-			},
-			rejectUnauthorized: false,
-		};
+	onilne(event, options, topic, host) {
 		id = event.sender.id
 		const client = mqtt.connect(host, options);
 
@@ -35,7 +17,7 @@ class MqttUtil {
 
 		client.on("connect", () => {
 			BrowserWindow.fromId(id).send('mqtt-service', 'onlineSuccess')
-			client.subscribe("testtopic/electron", {
+			client.subscribe("smy-topic/" + topic, {
 				qos: 0,
 			});
 		});

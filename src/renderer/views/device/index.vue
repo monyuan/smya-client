@@ -49,13 +49,18 @@ export default {
 			background: 'black',
 			customClass: 'onlineLoading'
 		});
-		this.onSubmit()
+		// this.onSubmit()
 		this.devicenName = localStorage.getItem("name")
 	},
 
 	methods: {
 
 		async onSubmit() {
+			let data = {
+				username: localStorage.getItem("sn"),
+				password: localStorage.getItem("token"),
+				host: "mqtt://emqx.orzlab.com:9004"
+			}
 			await ipcRenderer.invoke("mq-online", "login")
 		},
 		onCancel() {

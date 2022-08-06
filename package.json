@@ -69,6 +69,7 @@
     "electron-updater": "^5.0.1",
     "express": "4.17.3",
     "fs-extra": "^10.1.0",
+    "getmac": "^5.20.0",
     "mqtt": "^4.3.7",
     "node-cmd": "^5.0.0"
   },
