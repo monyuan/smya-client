@@ -6,26 +6,38 @@ import {
 import cmdShell from "node-cmd"
 
 var id = 2
+var client = null;
 class MqttUtil {
+
+	offline() {
+		console.log("end")
+		client.end()
+	}
+
 	onilne(event, options, topic, host) {
+
 		id = event.sender.id
-		const client = mqtt.connect(host, options);
+		client = mqtt.connect(host, options);
 
 		client.on("reconnect", () => {
 			BrowserWindow.fromId(id).send('mqtt-service', '连接服务器中，请稍后...')
 		});
 
 		client.on("connect", () => {
-			BrowserWindow.fromId(id).send('mqtt-service', 'onlineSuccess')
+			// BrowserWindow.fromId(id).send('mqtt-service', 'onlineSuccess')
 			client.subscribe("smy-topic/" + topic, {
 				qos: 0,
 			});
 		});
 
+		// client.on("error", (err) => {
+		// 	console.log("Connection error: ", err);
+		// 	client.end();
+		// });
+
 		client.on("message", (topic, message, packet) => {
-			console.log("message")
+			BrowserWindow.fromId(id).send('mqtt-service', message.toString())
 			this.do(message)
-			BrowserWindow.fromId(id).send('mqtt-service', 'server：' + message.toString())
 		});
 
 	}
@@ -55,7 +67,7 @@ class MqttUtil {
 	}
 
 	msg(title, body) {
-		BrowserWindow.fromId(id).send('mqtt-service', '是否支持消息通知：' + Notification.isSupported())
+		// BrowserWindow.fromId(id).send('mqtt-service', '是否支持消息通知：' + Notification.isSupported())
 		new Notification({
 			title: title,
 			body: body

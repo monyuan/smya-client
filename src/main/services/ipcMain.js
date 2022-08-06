@@ -14,6 +14,11 @@ import MqttUtil from './mqttUtil'
 import {
 	updater
 } from './HotUpdater'
+import {
+	ebtMain
+} from 'electron-baidu-tongji'
+const isDevelopment = process.env.NODE_ENV !== 'production'
+ebtMain(ipcMain, isDevelopment)
 
 export default {
 	Mainfunc(IsUseSysTitle) {
@@ -25,13 +30,27 @@ export default {
 				keepalive: 30,
 				clientId: "smy_" + Math.random().toString(16).substr(2, 8),
 				clean: true,
+				protocolId: "MQTT",
+				protocolVersion: 4,
 				username: info.username,
 				password: info.password,
 				reconnectPeriod: 1000,
 				connectTimeout: 30 * 1000,
 				rejectUnauthorized: false,
+				will: {
+					topic: "smy-topic/" + info.password,
+					payload: "1",
+					qos: 0,
+					retain: false,
+				}
 			};
 			mq.onilne(event,options, info.password, info.host)
+			mq.onilne(event)
+			return "ok"
+		})
+
+		ipcMain.handle('mq-offline', (event, arg) => {
+			mq.offline()
 			return "ok"
 		})
 

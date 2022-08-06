@@ -65,6 +65,7 @@
   },
   "dependencies": {
     "axios": "^0.27.2",
+    "electron-baidu-tongji": "^1.0.5",
     "electron-store": "^8.0.2",
     "electron-updater": "^5.0.1",
     "express": "4.17.3",
