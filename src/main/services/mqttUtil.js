@@ -24,16 +24,16 @@ class MqttUtil {
 		});
 
 		client.on("connect", () => {
-			// BrowserWindow.fromId(id).send('mqtt-service', 'onlineSuccess')
+			BrowserWindow.fromId(id).send('mqtt-service', 'onlineSuccess')
 			client.subscribe("smy-topic/" + topic, {
 				qos: 0,
 			});
 		});
 
-		// client.on("error", (err) => {
-		// 	console.log("Connection error: ", err);
-		// 	client.end();
-		// });
+		client.on("error", (err) => {
+			console.log("Connection error: ", err);
+			client.end();
+		});
 
 		client.on("message", (topic, message, packet) => {
 			BrowserWindow.fromId(id).send('mqtt-service', message.toString())

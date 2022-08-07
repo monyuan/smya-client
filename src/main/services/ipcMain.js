@@ -44,8 +44,7 @@ export default {
 					retain: false,
 				}
 			};
-			mq.onilne(event,options, info.password, info.host)
-			mq.onilne(event)
+			mq.onilne(event, options, info.password, info.host)
 			return "ok"
 		})
 
