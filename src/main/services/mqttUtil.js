@@ -68,6 +68,10 @@ class MqttUtil {
 
 	msg(title, body) {
 		// BrowserWindow.fromId(id).send('mqtt-service', '是否支持消息通知：' + Notification.isSupported())
+
+		if(!title){
+			title = "来自神秘鸭服务端消息"
+		}
 		new Notification({
 			title: title,
 			body: body

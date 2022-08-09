@@ -1,4 +1,4 @@
-import { BrowserWindow, Menu, app } from 'electron'
+import { BrowserWindow, Menu, Tray, ipcMain,nativeImage  } from 'electron'
 import { platform } from "os"
 import menuconfig from '../config/menu'
 import config from '@config'
@@ -8,8 +8,12 @@ import path from "path";
 var loadWindow = null
 var mainWindow = null
 setIpc.Mainfunc(config.IsUseSysTitle)
-console.log(path.join(__dirname, "preload.js"))
+// console.log(path.join(__dirname, 'static/icon.png'))
 function createMainWindow() {
+  let timer = null
+  let count = 0
+  let tray = null
+  let icon = path.join(__dirname, 'static/icon.png')
   /**
    * Initial window options
    */
@@ -17,6 +21,7 @@ function createMainWindow() {
     height: 450,
     width: 350,
     show: false,
+    icon: icon,
     resizable: false,
     titleBarStyle: platform().includes('win32') ? 'default' : 'hidden',
     webPreferences: {
@@ -33,18 +38,23 @@ function createMainWindow() {
       preload: path.join(__dirname, "preload.js")
     }
   })
-  // 这里设置只有开发环境才注入显示开发者模式
-  // if (process.env.NODE_ENV === 'development' || config.build.openDevTools) {
-  //   menuconfig.push({
-  //     label: '开发者设置',
-  //     submenu: [{
-  //       label: '切换到开发者模式',
-  //       accelerator: 'CmdOrCtrl+I',
-  //       role: 'toggledevtools'
-  //     }]
-  //   })
-  // }
-  // 载入菜单
+  
+  tray = new Tray(path.join(__dirname, 'static/icon.png'))
+  const contextMenu = Menu.buildFromTemplate([
+    {
+      label: '神秘鸭',
+      role: 'redo',
+      click: () => {
+        if (mainWindow) {
+          mainWindow.show()
+        }
+      }
+    },
+    { label: '退出神秘鸭', role: 'quit' }
+  ])
+  tray.setToolTip('微信')
+  tray.setContextMenu(contextMenu)
+
   Menu.buildFromTemplate(menuconfig)
   Menu.setApplicationMenu(null)
   mainWindow.loadURL(winURL)
@@ -54,15 +64,48 @@ function createMainWindow() {
     if (process.env.NODE_ENV === 'development' || config.build.devTools) mainWindow.webContents.openDevTools(true)
     if (config.UseStartupChart) loadWindow.destroy()
   })
-  mainWindow.on('maximize', () => {
-    mainWindow.webContents.send("w-max", true)
+
+  ipcMain.handle('haveMessage', (event,arg) => {
+    timer = setInterval(() => {
+      count += 1
+      if (count % 2 === 0) {
+        tray.setImage(icon)
+      } else {
+        tray.setImage(nativeImage.createEmpty()) // 创建一个空的nativeImage实例
+      }
+      tray.setToolTip('来自神秘鸭服务端消息')
+    }, 500)
   })
-  mainWindow.on('unmaximize', () => {
-    mainWindow.webContents.send("w-max", false)
+
+  tray.on('click', () => {
+    if (mainWindow.isVisible()) {
+      mainWindow.hide()
+    } else {
+      mainWindow.show()
+      tray.setImage(icon)
+      tray.setToolTip('神秘鸭-ORZ实验室')
+      clearInterval(timer)
+      timer = null
+      count = 0
+    }
   })
-  mainWindow.on('closed', () => {
-    mainWindow = null
-    app.quit();
+
+  mainWindow.on('minimize', ev => {
+    // 阻止最小化
+    ev.preventDefault();
+    // 隐藏窗口
+    mainWindow.hide();
+  });
+
+   // 托盘图标被双击
+   tray.on('double-click', () => {
+    // 显示窗口
+    mainWindow.show();
+  });
+
+  mainWindow.on('close', ev => {
+    ev.preventDefault();
+    mainWindow.hide()
   })
 }
 

@@ -2,7 +2,6 @@ import {
 	ipcMain,
 	dialog,
 	BrowserWindow,
-	webContents
 } from 'electron'
 import Server from '../server/index'
 import {

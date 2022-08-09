@@ -32,6 +32,10 @@ ipcRenderer.on('mqtt-service', (event, arg) => {
 		arg = "已连接到ORZLAB服务端"
 	}
 	document.getElementById('log').value = "服务端日志(只展示最近一条): \n\n" + arg;
+
+	if(arg.indexOf("message") > -1){
+		ipcRenderer.invoke("haveMessage", arg)
+	}
 })
 
 export default {
