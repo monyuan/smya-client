@@ -1,4 +1,4 @@
 module.exports = {
   NODE_ENV: '"development"',
-  BASE_API: 'http://127.0.0.1:9098/api'
+  BASE_API: 'https://gateway.smya.cn/smya-service/api'
 }

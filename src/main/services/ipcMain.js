@@ -3,7 +3,6 @@ import {
 	dialog,
 	BrowserWindow,
 } from 'electron'
-import Server from '../server/index'
 import {
 	winURL
 } from '../config/StaticPath'
@@ -101,28 +100,6 @@ export default {
 				arg.title,
 				arg.message
 			)
-		})
-		ipcMain.handle('statr-server', async () => {
-			try {
-				const serveStatus = await Server.StatrServer()
-				return serveStatus
-			} catch (error) {
-				dialog.showErrorBox(
-					'错误',
-					error
-				)
-			}
-		})
-		ipcMain.handle('stop-server', async (event, arg) => {
-			try {
-				const serveStatus = await Server.StopServer()
-				return serveStatus
-			} catch (error) {
-				dialog.showErrorBox(
-					'错误',
-					error
-				)
-			}
 		})
 		let childWin = null;
 		let cidArray = [];

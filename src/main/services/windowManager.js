@@ -5,11 +5,14 @@ import config from '@config'
 import setIpc from './ipcMain'
 import { winURL, loadingURL } from '../config/StaticPath'
 import path from "path";
+import log from "electron-log"
+
 var loadWindow = null
 var mainWindow = null
 setIpc.Mainfunc(config.IsUseSysTitle)
 // console.log(path.join(__dirname, 'static/icon.png'))
 function createMainWindow() {
+  log.error("33333")
   let timer = null
   let count = 0
   let tray = null
@@ -32,13 +35,25 @@ function createMainWindow() {
       transparent: true,
       backgroundColor: '#00000000',
       // 如果是开发模式可以使用devTools
+      // devTools: process.env.NODE_ENV === 'development' || config.build.openDevTools,
       devTools: process.env.NODE_ENV === 'development' || config.build.openDevTools,
       // 在macos中启用橡皮动画
       scrollBounce: process.platform === 'darwin',
       preload: path.join(__dirname, "preload.js")
     }
   })
-  
+
+  Menu.buildFromTemplate(menuconfig)
+  Menu.setApplicationMenu(null)
+  mainWindow.loadURL(winURL)
+
+  mainWindow.webContents.once('dom-ready', () => {
+    mainWindow.show()
+    if (process.env.NODE_ENV === 'development' || config.build.devTools) mainWindow.webContents.openDevTools(true)
+    if (config.UseStartupChart) loadWindow.destroy()
+  })
+
+
   tray = new Tray(path.join(__dirname, 'static/icon.png'))
   const contextMenu = Menu.buildFromTemplate([
     {
@@ -54,16 +69,6 @@ function createMainWindow() {
   ])
   tray.setToolTip('微信')
   tray.setContextMenu(contextMenu)
-
-  Menu.buildFromTemplate(menuconfig)
-  Menu.setApplicationMenu(null)
-  mainWindow.loadURL(winURL)
-
-  mainWindow.webContents.once('dom-ready', () => {
-    mainWindow.show()
-    if (process.env.NODE_ENV === 'development' || config.build.devTools) mainWindow.webContents.openDevTools(true)
-    if (config.UseStartupChart) loadWindow.destroy()
-  })
 
   ipcMain.handle('haveMessage', (event,arg) => {
     timer = setInterval(() => {
